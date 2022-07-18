@@ -10,11 +10,12 @@ import java.awt.event.KeyListener;
 
 public class GamePanel extends JPanel {
     private MouseInputs mouseInputs;
-    private int x = 0;
-    private int y = 0;
+    private int x = 100, y = 100;
+    private int frames = 0;
+    private long lastCheck = 0;
 
     public GamePanel() {
-        mouseInputs = new MouseInputs();
+        mouseInputs = new MouseInputs(this);
         addKeyListener(new KeyboardInputs(this));
         addMouseListener(mouseInputs);
         addMouseMotionListener(mouseInputs);
@@ -27,15 +28,20 @@ public class GamePanel extends JPanel {
         //and then we can begin with our method
         super.paintComponent(graphics);
 
-        graphics.fillRect(100 + x, 100 + y, 200, 50);
+        graphics.fillRect(x, y, 200, 50);
+
+        updateRectangle();
+    }
+
+    private void updateRectangle() {
+        this.x++;
+        this.y++;
     }
 
     public void changeX(int value){
         this.x += value;
-        repaint();
     }
     public void changeY(int value){
         this.y += value;
-        repaint();
     }
 }
