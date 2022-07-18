@@ -6,5 +6,6 @@ public class Game {
     public Game() {
         gamePanel = new GamePanel();
         gameWindow = new GameWindow(gamePanel);
+        gamePanel.requestFocus(); // game window requests focus from inputs
     }
 }
