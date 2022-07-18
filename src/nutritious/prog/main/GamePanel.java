@@ -133,6 +133,12 @@ public class GamePanel extends JPanel {
         }
     }
 
+    public void updateGame() {
+        updateAnimationTick();
+        setAnimation();
+        updatePosition();
+    }
+
     public void setDirection(int direction){
         this.playerDirection = direction;
         this.isMoving = true;

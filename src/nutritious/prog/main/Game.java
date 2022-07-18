@@ -4,7 +4,8 @@ public class Game implements Runnable{
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
-    private final int FPS_SET = 120;
+    private final int FPS_SET = 120; //FRAMES PER SECOND
+    private final int UPS_SET = 200; //UPDATES PER SECOND
     public Game() {
 
         gamePanel = new GamePanel();
@@ -18,30 +19,50 @@ public class Game implements Runnable{
         gameThread.start();
     }
 
+    public void update() {
+        gamePanel.updateGame();
+    }
+
     //GAME LOOP
     @Override
     public void run() {
         //Setting FPS to constant 120
         double timePerFrame = 1000000000.0 / FPS_SET;
-        long lastFrame = System.nanoTime();
+        double timePerUpdate = 1000000000.0 / UPS_SET;
+
+        long previousTime = System.nanoTime();
 
         int frames = 0;
+        int updates = 0;
         long lastCheck = System.currentTimeMillis();
 
-        long now;
-
+        double deltaU = 0;
+        double deltaF = 0;
         while(true) {
-            now = System.nanoTime();
-            if(System.nanoTime() - lastFrame >= timePerFrame) {
-                gamePanel.repaint();
-                lastFrame = now;
-                frames++;
+            long currentTime = System.nanoTime();
+
+            deltaU += (currentTime - previousTime) / timePerUpdate;
+            deltaF += (currentTime - previousTime) / timePerFrame;
+            previousTime = currentTime;
+
+            if (deltaU >= 1) {
+                update();
+                updates++;
+                deltaU--;
             }
-            //Counting FPS and displaying them
-            if(System.currentTimeMillis() - lastCheck >= 1000) {
+
+            if (deltaF >= 1) {
+                gamePanel.repaint();
+                frames++;
+                deltaF--;
+            }
+            //Counting FPS and UPS and displaying them
+            if (System.currentTimeMillis() - lastCheck >= 1000) {
                 lastCheck = System.currentTimeMillis();
-                System.out.println("FPS: " + frames);
+                System.out.println("FPS: " + frames + " | UPS: " + updates);
                 frames = 0;
+                updates = 0;
+
             }
         }
     }
