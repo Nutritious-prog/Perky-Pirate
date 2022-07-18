@@ -18,6 +18,7 @@ public class Game implements Runnable{
         gameThread.start();
     }
 
+    //GAME LOOP
     @Override
     public void run() {
         //Setting FPS to constant 120
@@ -36,7 +37,7 @@ public class Game implements Runnable{
                 lastFrame = now;
                 frames++;
             }
-            //Counting FPS
+            //Counting FPS and displaying them
             if(System.currentTimeMillis() - lastCheck >= 1000) {
                 lastCheck = System.currentTimeMillis();
                 System.out.println("FPS: " + frames);
