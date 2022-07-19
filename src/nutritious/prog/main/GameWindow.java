@@ -1,6 +1,8 @@
 package nutritious.prog.main;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 public class GameWindow {
     private JFrame jFrame;
@@ -12,7 +14,17 @@ public class GameWindow {
         jFrame.setResizable(false);
         jFrame.pack(); //fit size of the window to preferred size of its components
         jFrame.setLocationRelativeTo(null); //spawn window in the center of our screen
+        jFrame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                gamePanel.getGame().windowFocusLost();
+            }
 
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+
+            }
+        });
 
         jFrame.setVisible(true);
     }

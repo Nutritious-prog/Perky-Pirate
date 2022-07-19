@@ -90,4 +90,7 @@ public class Game implements Runnable {
         return this.player;
     }
 
+    public void windowFocusLost() {
+        player.resetDirBooleans();
+    }
 }

@@ -134,4 +134,11 @@ public class Player extends Character{
     public void setRight(boolean right) {
         this.right = right;
     }
+
+    public void resetDirBooleans() {
+        left = false;
+        right = false;
+        up = false;
+        down = false;
+    }
 }
