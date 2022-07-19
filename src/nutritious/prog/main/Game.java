@@ -1,17 +1,31 @@
 package nutritious.prog.main;
 
-public class Game implements Runnable{
+import nutritious.prog.entities.Player;
+
+import java.awt.*;
+
+public class Game implements Runnable {
+
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
-    private final int FPS_SET = 120; //FRAMES PER SECOND
-    private final int UPS_SET = 200; //UPDATES PER SECOND
-    public Game() {
+    private final int FPS_SET = 120;
+    private final int UPS_SET = 200;
 
-        gamePanel = new GamePanel();
+    private Player player;
+
+    public Game() {
+        initClasses();
+        gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
-        gamePanel.requestFocus(); // game window requests focus from inputs
+        gamePanel.requestFocus();
+
         startGameLoop();
+
+    }
+
+    private void initClasses() {
+        player = new Player(200,200);
     }
 
     private void startGameLoop() {
@@ -20,13 +34,16 @@ public class Game implements Runnable{
     }
 
     public void update() {
-        gamePanel.updateGame();
+        player.update();
     }
 
-    //GAME LOOP
+    public void render(Graphics graphics){
+        player.render(graphics);
+    }
+
     @Override
     public void run() {
-        //Setting FPS to constant 120
+
         double timePerFrame = 1000000000.0 / FPS_SET;
         double timePerUpdate = 1000000000.0 / UPS_SET;
 
@@ -38,7 +55,8 @@ public class Game implements Runnable{
 
         double deltaU = 0;
         double deltaF = 0;
-        while(true) {
+
+        while (true) {
             long currentTime = System.nanoTime();
 
             deltaU += (currentTime - previousTime) / timePerUpdate;
@@ -56,7 +74,7 @@ public class Game implements Runnable{
                 frames++;
                 deltaF--;
             }
-            //Counting FPS and UPS and displaying them
+
             if (System.currentTimeMillis() - lastCheck >= 1000) {
                 lastCheck = System.currentTimeMillis();
                 System.out.println("FPS: " + frames + " | UPS: " + updates);
@@ -65,5 +83,11 @@ public class Game implements Runnable{
 
             }
         }
+
     }
+
+    public Player getPlayer() {
+        return this.player;
+    }
+
 }
