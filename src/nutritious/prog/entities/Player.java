@@ -14,8 +14,9 @@ public class Player extends Character{
     private BufferedImage[][] animations;
     private int animationTick, animationIndex, animationSpeed = 15;
     private int playerAction = IDLE;
-    private int playerDirection = -1;
+    private boolean up, down, left, right;
     private boolean isMoving = false;
+    private float playerSpeed = 2.0f;
 
     public Player(float x, float y) {
         super(x, y);
@@ -23,9 +24,9 @@ public class Player extends Character{
     }
 
     public void update() {
+        updatePosition();
         updateAnimationTick();
         setAnimation();
-        updatePosition();
     }
     public void render(Graphics graphics) {
         //we retrieve animation frames by giving the array parameters of
@@ -57,15 +58,6 @@ public class Player extends Character{
         }
     }
 
-    public void setDirection(int direction){
-        this.playerDirection = direction;
-        this.isMoving = true;
-    }
-
-    public void setMoving(boolean isMoving) {
-        this.isMoving = isMoving;
-    }
-
     private void setAnimation() {
         if(isMoving) {
             playerAction = RUNNING;
@@ -92,23 +84,54 @@ public class Player extends Character{
     }
 
     private void updatePosition() {
-        //using KeyboardInputs we set playerDirection and with this information
-        //which key was pressed we move our character
-        if(isMoving) {
-            switch (playerDirection) {
-                case LEFT:
-                    x += -5;
-                    break;
-                case UP:
-                    y += -5;
-                    break;
-                case RIGHT:
-                    x += 5;
-                    break;
-                case DOWN:
-                    y += 5;
-                    break;
-            }
+        isMoving = false;
+
+        if (left && !right) {
+            x += -playerSpeed;
+            isMoving = true;
+        } else if (right && !left) {
+            x += playerSpeed;
+            isMoving = true;
         }
+
+        if (up && !down) {
+            y += -playerSpeed;
+            isMoving = true;
+        } else if (down && !up) {
+            y += playerSpeed;
+            isMoving = true;
+        }
+    }
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
     }
 }
