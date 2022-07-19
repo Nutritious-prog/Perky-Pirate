@@ -6,6 +6,8 @@ import nutritious.prog.inputs.MouseInputs;
 import javax.swing.*;
 import java.awt.*;
 
+import static nutritious.prog.main.Game.*;
+
 public class GamePanel extends JPanel {
     private MouseInputs mouseInputs;
     private Game game;
@@ -20,7 +22,7 @@ public class GamePanel extends JPanel {
     }
 
     private void setPanelSize() {
-        Dimension size = new Dimension(1280,800);
+        Dimension size = new Dimension(GAME_WIDTH,GAME_WIDTH);
         setPreferredSize(size);
     }
 
