@@ -1,37 +1,37 @@
 package nutritious.prog.entities;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 public abstract class Entity {
     protected float x, y;
     protected int width, height;
-    protected Rectangle hitbox;
+    protected Rectangle2D.Float hitbox;
 
     public Entity(float x, float y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        initHitbox();
     }
 
     protected void drawHitbox(Graphics graphics) {
         //for debugging hitbox
         graphics.setColor(Color.RED);
-        graphics.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        graphics.drawRect((int)hitbox.x,(int)hitbox.y,(int) hitbox.width, (int)hitbox.height);
     }
 
-    private void initHitbox() {
+    protected void initHitbox(float x, float y, float width, float height) {
         //we set hitbox to bo exact same as entity model
-        hitbox = new Rectangle((int)x,(int)y, width, height);
+        hitbox = new Rectangle2D.Float(x, y, width, height);
     }
 
-    protected void updateHitbox() {
-        hitbox.x = (int)x;
-        hitbox.y = (int)y;
-    }
+//    protected void updateHitbox() {
+//        hitbox.x = (int)x;
+//        hitbox.y = (int)y;
+//    }
 
-    public Rectangle getHitbox() {
+    public Rectangle2D.Float getHitbox() {
         return hitbox;
     }
 }

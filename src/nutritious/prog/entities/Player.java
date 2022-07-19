@@ -1,28 +1,35 @@
 package nutritious.prog.entities;
 
+import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static nutritious.prog.utils.Constants.PlayerConstants.*;
+import static nutritious.prog.utils.HelperMethods.CanMoveHere;
 
 public class Player extends Entity {
     private BufferedImage[][] animations;
-    private int animationTick, animationIndex, animationSpeed = 15;
+    private int animationTick, animationIndex, animationTime = 15;
     private int playerAction = IDLE;
     private boolean up, down, left, right;
     private boolean isMoving = false, isAttacking = false;
     private float playerSpeed = 2.0f;
+    private int[][] levelData;
+    //offsets from top left corner of whole image to top left corner of our character (big hitBox to small hitBox)
+    private float xDrawOffset = 21 * Game.SCALE;
+    private float yDrawOffset = 4 * Game.SCALE;
+
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimations();
+        initHitbox(x, y, 20 * Game.SCALE, 28 * Game.SCALE); //size of our characters body
     }
 
     public void update() {
         updatePosition();
-        updateHitbox();
         updateAnimationTick();
         setAnimation();
     }
@@ -30,7 +37,7 @@ public class Player extends Entity {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
-        graphics.drawImage(animations[playerAction][animationIndex], (int)this.x, (int)this.y, 128, 80,  null);
+        graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset), (int)(hitbox.y - yDrawOffset), 128, 80,  null);
         drawHitbox(graphics);
     }
 
@@ -43,6 +50,10 @@ public class Player extends Entity {
                     animations[j][i] = img.getSubimage(i * 64, j*40, 64, 40);
                 }
             }
+    }
+
+    public void loadLevelData(int[][] levelData) {
+        this.levelData = levelData;
     }
 
     private void setAnimation() {
@@ -74,7 +85,7 @@ public class Player extends Entity {
         animationTick++;
         //we check if our one frame of animation lasted enough time and if so
         //we reset the counter and increment animationIndex to move to next frame of animation
-        if(animationTick >= animationSpeed) {
+        if(animationTick >= animationTime) {
             animationTick = 0;
             animationIndex++;
             //if we reached the end of an array with animation frames we go back to its beginning,
@@ -82,28 +93,35 @@ public class Player extends Entity {
             //we set length of the row in array depending on players current action
             if(animationIndex >= GetSpriteAmount(playerAction)) {
                 animationIndex = 0;
-                isAttacking = false; // we want only one animation of attack per click
+                isAttacking = false; // we want only one animation of attack per click (otherwise one click will cause infinite animation)
             }
         }
     }
 
     private void updatePosition() {
         isMoving = false;
+        //check if we are moving
+        if(!left && !right && !up && !down)
+            return;
+
+        float xSpeed = 0, ySpeed = 0;
 
         //checking if player is holding only one of two mutually exclusive buttons
         if (left && !right) {
-            x += -playerSpeed;
-            isMoving = true;
+            xSpeed = -playerSpeed;
         } else if (right && !left) {
-            x += playerSpeed;
-            isMoving = true;
+            xSpeed = playerSpeed;
         }
 
         if (up && !down) {
-            y += -playerSpeed;
-            isMoving = true;
+            ySpeed = -playerSpeed;
         } else if (down && !up) {
-            y += playerSpeed;
+            ySpeed = playerSpeed;
+        }
+
+        if(CanMoveHere(hitbox.x + xSpeed, hitbox.y + ySpeed, hitbox.width, hitbox.height, levelData)) {
+            hitbox.x += xSpeed;
+            hitbox.y += ySpeed;
             isMoving = true;
         }
     }
