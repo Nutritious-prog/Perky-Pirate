@@ -15,8 +15,8 @@ public class Player extends Character{
     private boolean isMoving = false, isAttacking = false;
     private float playerSpeed = 2.0f;
 
-    public Player(float x, float y) {
-        super(x, y);
+    public Player(float x, float y, int width, int height) {
+        super(x, y, width, height);
         loadAnimations();
     }
 
@@ -33,7 +33,7 @@ public class Player extends Character{
     }
 
     private void loadAnimations() {
-            BufferedImage img = LoadSave.getSpriteAtlas(LoadSave.PLAYER_ATLAS);
+            BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
             //loading sub images with all single animations frames to array
             animations = new BufferedImage[9][6];
             for(int j = 0; j < animations.length; j++) {
