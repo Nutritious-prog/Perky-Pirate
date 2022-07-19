@@ -1,4 +1,4 @@
-package levels;
+package nutritious.prog.levels;
 
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
@@ -39,7 +39,5 @@ public class LevelManager {
         }
     }
 
-    public void update() {
-
-    }
+    public void update() {}
 }

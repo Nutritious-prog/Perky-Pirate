@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 import static nutritious.prog.utils.Constants.PlayerConstants.*;
 
-public class Player extends Character{
+public class Player extends Entity {
     private BufferedImage[][] animations;
     private int animationTick, animationIndex, animationSpeed = 15;
     private int playerAction = IDLE;
@@ -22,6 +22,7 @@ public class Player extends Character{
 
     public void update() {
         updatePosition();
+        updateHitbox();
         updateAnimationTick();
         setAnimation();
     }
@@ -29,7 +30,8 @@ public class Player extends Character{
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
-        graphics.drawImage(animations[playerAction][animationIndex], (int)this.x, (int)this.y, 256, 160,  null);
+        graphics.drawImage(animations[playerAction][animationIndex], (int)this.x, (int)this.y, 128, 80,  null);
+        drawHitbox(graphics);
     }
 
     private void loadAnimations() {
@@ -88,6 +90,7 @@ public class Player extends Character{
     private void updatePosition() {
         isMoving = false;
 
+        //checking if player is holding only one of two mutually exclusive buttons
         if (left && !right) {
             x += -playerSpeed;
             isMoving = true;

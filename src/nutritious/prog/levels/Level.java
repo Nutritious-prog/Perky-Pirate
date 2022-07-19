@@ -1,4 +1,4 @@
-package levels;
+package nutritious.prog.levels;
 
 public class Level {
     private int[][] levelData;

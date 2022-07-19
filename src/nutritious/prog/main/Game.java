@@ -1,6 +1,6 @@
 package nutritious.prog.main;
 
-import levels.LevelManager;
+import nutritious.prog.levels.LevelManager;
 import nutritious.prog.entities.Player;
 
 import java.awt.*;
