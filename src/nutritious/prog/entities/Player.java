@@ -15,7 +15,7 @@ public class Player extends Character{
     private int animationTick, animationIndex, animationSpeed = 15;
     private int playerAction = IDLE;
     private boolean up, down, left, right;
-    private boolean isMoving = false;
+    private boolean isMoving = false, isAttacking = false;
     private float playerSpeed = 2.0f;
 
     public Player(float x, float y) {
@@ -59,11 +59,27 @@ public class Player extends Character{
     }
 
     private void setAnimation() {
+        int startAnimation = playerAction;
+
         if(isMoving) {
             playerAction = RUNNING;
         } else {
             playerAction = IDLE;
         }
+
+        if(isAttacking) {
+            playerAction = ATTACK_1;
+        }
+
+        //if we changed animation we must reset the animationTick to start new animation from the  beginning
+        if(startAnimation != playerAction) {
+            resetAnimationTick();
+        }
+    }
+
+    private void resetAnimationTick() {
+        animationTick = 0;
+        animationIndex = 0;
     }
 
     private void updateAnimationTick() {
@@ -79,6 +95,7 @@ public class Player extends Character{
             //we set length of the row in array depending on players current action
             if(animationIndex >= GetSpriteAmount(playerAction)) {
                 animationIndex = 0;
+                isAttacking = false; // we want only one animation of attack per click
             }
         }
     }
@@ -101,6 +118,10 @@ public class Player extends Character{
             y += playerSpeed;
             isMoving = true;
         }
+    }
+
+    public void setAttacking(boolean isAttacking) {
+        this.isAttacking = isAttacking;
     }
 
     public boolean isUp() {
