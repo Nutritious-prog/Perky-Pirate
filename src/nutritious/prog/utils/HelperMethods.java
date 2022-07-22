@@ -2,6 +2,8 @@ package nutritious.prog.utils;
 
 import nutritious.prog.main.Game;
 
+import java.awt.geom.Rectangle2D;
+
 public class HelperMethods {
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] levelData) {
         if(!IsSolid(x, y, levelData))                                  // top left corner of our hitbox
@@ -29,5 +31,46 @@ public class HelperMethods {
         if(value >= 48 || value < 0 || value != 11) return true;        //11 is transparent tile
 
         return false;
+    }
+
+    //used when can move here returns false, but we still have space to move to wall
+    //that is a fraction of our hitbox
+    public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
+        //calculating on what tile are we at the moment
+        int currentTile = (int)(hitbox.x / Game.TILES_SIZE);
+        if(xSpeed > 0) {
+            //wall is on the right
+            int tileXPosition = currentTile * Game.TILES_SIZE; // currents tile left border in px
+            int xOffset = (int)(Game.TILES_SIZE - hitbox.width); // free space around hitbox
+            //we add these values to move our hitbox as far to the right as possible
+            return tileXPosition + xOffset - 1; // -1 is for our hitbox to be right next to wall not in it
+        } else {
+            //wall is on the left
+            return currentTile * Game.TILES_SIZE; // returns position in px of the very beginning of the tile we are in
+        }
+    }
+
+    public static float GetEntityYPosUnderRoofOrAboveTheFloor(Rectangle2D.Float hitbox, float airSpeed) {
+        int currentTile = (int)(hitbox.y / Game.TILES_SIZE);
+        if(airSpeed > 0) {
+            //falling - touching floor
+            int tileYPosition = currentTile * Game.TILES_SIZE;
+            int yOffset = (int)(Game.TILES_SIZE - hitbox.height);
+            return tileYPosition + yOffset - 1;
+        } else {
+            //jumping - touching roof
+            return currentTile * Game.TILES_SIZE;
+        }
+    }
+
+    public static boolean IsEntityOnTheFloor(Rectangle2D.Float hitbox, int[][] levelData) {
+        //Check the one pixel below bottom left and bottom right corner
+        //If both of those are not solid we are in the air
+        if(!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, levelData)) {
+            if(!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, levelData)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
