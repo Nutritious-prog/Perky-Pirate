@@ -21,7 +21,7 @@ public abstract class Entity {
         graphics.drawRect((int)hitbox.x,(int)hitbox.y,(int) hitbox.width, (int)hitbox.height);
     }
 
-    protected void initHitbox(float x, float y, float width, float height) {
+    protected void initHitbox(float x, float y, int width, int height) {
         //we set hitbox to bo exact same as entity model
         hitbox = new Rectangle2D.Float(x, y, width, height);
     }

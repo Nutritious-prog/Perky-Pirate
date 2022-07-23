@@ -2,18 +2,31 @@ package nutritious.prog.gameStates;
 
 import nutritious.prog.UI.MenuButton;
 import nutritious.prog.main.Game;
+import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 public class Menu extends State implements StateMethods{
     private MenuButton[] buttons = new MenuButton[3];
+    private BufferedImage backgroundImage;
+    private int menuX, menuY, menuWidth, menuHeight;
 
 
     public Menu(Game game) {
         super(game);
         loadButtons();
+        loadBackground();
+    }
+
+    private void loadBackground() {
+        backgroundImage = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND);
+        menuWidth = (int)(backgroundImage.getWidth() * Game.SCALE);
+        menuHeight = (int)(backgroundImage.getHeight() * Game.SCALE);
+        menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
+        menuY = (int)(45 * Game.SCALE);
     }
 
     private void loadButtons() {
@@ -31,6 +44,8 @@ public class Menu extends State implements StateMethods{
 
     @Override
     public void draw(Graphics graphics) {
+        graphics.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight, null);
+
         for(MenuButton mg : buttons) {
             mg.draw(graphics);
         }

@@ -16,7 +16,7 @@ public class Player extends Entity {
     private int playerAction = IDLE;
     private boolean up, down, left, right, jump;
     private boolean isMoving = false, isAttacking = false;
-    private float playerSpeed = 2.0f;
+    private float playerSpeed = 1.0f * Game.SCALE;
     private int[][] levelData;
     //offsets from top left corner of whole image to top left corner of our character (big hitBox to small hitBox)
     private float xDrawOffset = 21 * Game.SCALE;
@@ -32,7 +32,7 @@ public class Player extends Entity {
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimations();
-        initHitbox(x, y, 20 * Game.SCALE, 27 * Game.SCALE); //size of our characters body
+        initHitbox(x, y, (int)(20 * Game.SCALE), (int)(27 * Game.SCALE)); //size of our characters body
     }
 
     public void update() {
