@@ -1,7 +1,8 @@
 package nutritious.prog.main;
 
-import nutritious.prog.levels.LevelManager;
-import nutritious.prog.entities.Player;
+import nutritious.prog.gameStates.GameState;
+import nutritious.prog.gameStates.Playing;
+import nutritious.prog.gameStates.Menu;
 
 import java.awt.*;
 
@@ -10,8 +11,9 @@ public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
-    private Player player;
-    private LevelManager levelManager;
+
+    private Playing playing;
+    private Menu menu;
 
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
@@ -37,9 +39,8 @@ public class Game implements Runnable {
     }
 
     private void initClasses() {
-        levelManager = new LevelManager(this);
-        player = new Player(200, 200, (int) (64 * this.SCALE), (int) (40 * this.SCALE));
-        player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
+        menu = new Menu(this);
+        playing = new Playing(this);
     }
 
     private void startGameLoop() {
@@ -48,13 +49,30 @@ public class Game implements Runnable {
     }
 
     public void update() {
-        levelManager.update();
-        player.update();
+        //depending on what game state we are in we will render and update only that part
+        switch (GameState.state) {
+            case MENU:
+                menu.update();
+                break;
+            case PLAYING:
+                playing.update();
+                break;
+            default:
+                break;
+        }
     }
 
     public void render(Graphics graphics){
-        levelManager.draw(graphics);
-        player.render(graphics);
+        switch (GameState.state) {
+            case MENU:
+                menu.draw(graphics);
+                break;
+            case PLAYING:
+                playing.draw(graphics);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -102,11 +120,14 @@ public class Game implements Runnable {
 
     }
 
-    public Player getPlayer() {
-        return this.player;
+    public void windowFocusLost() {
+        if(GameState.state == GameState.PLAYING) playing.getPlayer().resetDirBooleans();
     }
 
-    public void windowFocusLost() {
-        player.resetDirBooleans();
+    public Menu getMenu() {
+        return menu;
+    }
+    public Playing getPlaying() {
+        return playing;
     }
 }
