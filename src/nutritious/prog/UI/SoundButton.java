@@ -9,70 +9,70 @@ import static nutritious.prog.utils.Constants.UI.PauseButtons.SOUND_BUTTON_SIZE_
 
 public class SoundButton extends PauseButton {
 
-    private BufferedImage[][] soundImgs;
-    private boolean mouseOver, mousePressed;
-    private boolean muted;
-    private int rowIndex, colIndex;
+    private BufferedImage[][] soundImages;
+    private boolean isMouseOver, isMousePressed;
+    private boolean isMuted;
+    private int rowIndex, colIndex; //in rows we have different buttons, in columns we have different button effects
 
     public SoundButton(int x, int y, int width, int height) {
         super(x, y, width, height);
 
-        loadSoundImgs();
+        loadSoundImages();
     }
 
-    private void loadSoundImgs() {
+    private void loadSoundImages() {
         BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.SOUND_BUTTONS);
-        soundImgs = new BufferedImage[2][3];
-        for (int j = 0; j < soundImgs.length; j++)
-            for (int i = 0; i < soundImgs[j].length; i++)
-                soundImgs[j][i] = temp.getSubimage(i * SOUND_BUTTON_SIZE_DEFAULT, j * SOUND_BUTTON_SIZE_DEFAULT, SOUND_BUTTON_SIZE_DEFAULT, SOUND_BUTTON_SIZE_DEFAULT);
+        soundImages = new BufferedImage[2][3];
+        for (int j = 0; j < soundImages.length; j++)
+            for (int i = 0; i < soundImages[j].length; i++)
+                soundImages[j][i] = temp.getSubimage(i * SOUND_BUTTON_SIZE_DEFAULT, j * SOUND_BUTTON_SIZE_DEFAULT, SOUND_BUTTON_SIZE_DEFAULT, SOUND_BUTTON_SIZE_DEFAULT);
     }
 
     public void update() {
-        if (muted)
+        if (isMuted)
             rowIndex = 1;
         else
             rowIndex = 0;
 
         colIndex = 0;
-        if (mouseOver)
+        if (isMouseOver)
             colIndex = 1;
-        if (mousePressed)
+        if (isMousePressed)
             colIndex = 2;
 
     }
 
     public void resetBools() {
-        mouseOver = false;
-        mousePressed = false;
+        isMouseOver = false;
+        isMousePressed = false;
     }
 
     public void draw(Graphics g) {
-        g.drawImage(soundImgs[rowIndex][colIndex], x, y, width, height, null);
+        g.drawImage(soundImages[rowIndex][colIndex], x, y, width, height, null);
     }
 
     public boolean isMouseOver() {
-        return mouseOver;
+        return isMouseOver;
     }
 
     public void setMouseOver(boolean mouseOver) {
-        this.mouseOver = mouseOver;
+        this.isMouseOver = mouseOver;
     }
 
     public boolean isMousePressed() {
-        return mousePressed;
+        return isMousePressed;
     }
 
     public void setMousePressed(boolean mousePressed) {
-        this.mousePressed = mousePressed;
+        this.isMousePressed = mousePressed;
     }
 
     public boolean isMuted() {
-        return muted;
+        return isMuted;
     }
 
     public void setMuted(boolean muted) {
-        this.muted = muted;
+        this.isMuted = muted;
     }
 
 }

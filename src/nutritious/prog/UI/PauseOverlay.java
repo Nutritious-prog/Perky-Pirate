@@ -80,6 +80,8 @@ public class PauseOverlay {
                 sfxButton.setMuted(!sfxButton.isMuted());
             }
         }
+        musicButton.resetBools();
+        sfxButton.resetBools();
     }
 
     public void mouseMoved(MouseEvent e) {
