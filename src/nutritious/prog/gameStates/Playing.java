@@ -1,5 +1,6 @@
 package nutritious.prog.gameStates;
 
+import nutritious.prog.UI.PauseOverlay;
 import nutritious.prog.entities.Player;
 import nutritious.prog.levels.LevelManager;
 import nutritious.prog.main.Game;
@@ -11,6 +12,8 @@ import java.awt.event.MouseEvent;
 public class Playing extends State implements StateMethods{
     private Player player;
     private LevelManager levelManager;
+    private PauseOverlay pauseOverlay;
+    private boolean isPaused;
 
     public Playing(Game game) {
         super(game);
@@ -21,6 +24,7 @@ public class Playing extends State implements StateMethods{
         levelManager = new LevelManager(game);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
+        pauseOverlay = new PauseOverlay();
     }
 
     public Player getPlayer() {
@@ -41,6 +45,7 @@ public class Playing extends State implements StateMethods{
     public void draw(Graphics graphics) {
         levelManager.draw(graphics);
         player.render(graphics);
+        pauseOverlay.draw(graphics);
     }
 
     @Override
