@@ -13,7 +13,7 @@ public class Playing extends State implements StateMethods{
     private Player player;
     private LevelManager levelManager;
     private PauseOverlay pauseOverlay;
-    private boolean isPaused;
+    private boolean isPaused = true;
 
     public Playing(Game game) {
         super(game);
@@ -39,6 +39,7 @@ public class Playing extends State implements StateMethods{
     public void update() {
         levelManager.update();
         player.update();
+        pauseOverlay.update();
     }
 
     @Override
@@ -57,17 +58,24 @@ public class Playing extends State implements StateMethods{
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        if(isPaused) {
+            System.out.println("mousePressedInPlaying");
+            pauseOverlay.mousePressed(e);
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if(isPaused) {
+            pauseOverlay.mouseReleased(e);
+        }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        if(isPaused) {
+            pauseOverlay.mouseMoved(e);
+        }
     }
 
     @Override
