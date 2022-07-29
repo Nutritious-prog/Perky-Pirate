@@ -13,12 +13,18 @@ public class VolumeButton extends PauseButton{
     private int index = 0;
     private boolean mouseOver, mousePressed;
     private int buttonX; // used for positioning button on slider
+    private int minimalX, maximalX; // boundaries where the button can go on slider
 
     public VolumeButton(int x, int y, int width, int height) {
         super(x + width / 2, y, VOLUME_WIDTH, height);
+        bounds.x +=  -VOLUME_WIDTH / 2;
         buttonX = x + width / 2;
         this.x = x;
         this.width = width;
+
+        minimalX = x + VOLUME_WIDTH / 2;
+        maximalX = x + width - VOLUME_WIDTH / 2;
+
         loadImgs();
     }
 
@@ -41,7 +47,20 @@ public class VolumeButton extends PauseButton{
 
     public void draw(Graphics g) {
         g.drawImage(slider, x, y , width, height, null);
-        g.drawImage(images[index], buttonX, y, VOLUME_WIDTH, height, null);
+        g.drawImage(images[index], buttonX - VOLUME_WIDTH / 2, y, VOLUME_WIDTH, height, null);
+    }
+
+    //method for moving button on the slider
+    public void changeX(int x) {
+        if(x < minimalX) {
+            buttonX = minimalX;
+        } else if(x > maximalX) {
+            buttonX = maximalX;
+        } else {
+            buttonX = x;
+        }
+
+        bounds.x = buttonX - VOLUME_WIDTH / 2;
     }
 
     //for releasing mouse (reset bools to get default index (default button))

@@ -22,11 +22,10 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
     public void mouseDragged(MouseEvent e) {
         switch (GameState.state) {
             case PLAYING:
-                //gamePanel.getGame().getPlaying().;
+                gamePanel.getGame().getPlaying().mouseDragged(e);
                 break;
             default:
                 break;
-
         }
     }
     @Override

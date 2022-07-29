@@ -85,14 +85,11 @@ public class PauseOverlay {
         volumeButton.draw(graphics);
     }
 
-    public void mouseDragged() {
-
+    public void mouseDragged(MouseEvent e) {
+        if(volumeButton.isMousePressed()) {
+            volumeButton.changeX(e.getX());
+        }
     }
-
-    public void mouseMoved() {
-
-    }
-
     public void mouseClicked(MouseEvent e) {
 
     }
@@ -109,6 +106,8 @@ public class PauseOverlay {
             replayButton.setMousePressed(true);
         } else if (isMouseOnButton(e, unpauseButton)) {
             unpauseButton.setMousePressed(true);
+        } else if (isMouseOnButton(e, volumeButton)) {
+            volumeButton.setMousePressed(true);
         }
     }
 
@@ -139,6 +138,7 @@ public class PauseOverlay {
         replayButton.resetBools();
         unpauseButton.resetBools();
         menuButton.resetBools();
+        volumeButton.resetBools();
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -147,6 +147,7 @@ public class PauseOverlay {
         menuButton.setMouseOver(false);
         replayButton.setMouseOver(false);
         unpauseButton.setMouseOver(false);
+        volumeButton.setMouseOver(false);
 
         if(isMouseOnButton(e, musicButton)) {
             musicButton.setMouseOver(true);
@@ -158,6 +159,8 @@ public class PauseOverlay {
             unpauseButton.setMouseOver(true);
         } else if (isMouseOnButton(e, replayButton)) {
             replayButton.setMouseOver(true);
+        } else if (isMouseOnButton(e, volumeButton)) {
+            volumeButton.setMouseOver(true);
         }
     }
 
