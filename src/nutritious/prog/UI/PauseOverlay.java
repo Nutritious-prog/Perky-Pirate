@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 
 import static nutritious.prog.utils.Constants.UI.PauseButtons.SOUND_BUTTON_SIZE;
 import static nutritious.prog.utils.Constants.UI.URMButtons.URM_BUTTON_SIZE;
+import static nutritious.prog.utils.Constants.UI.VolumeButtons.*;
 
 public class PauseOverlay {
     private Playing playing;
@@ -18,13 +19,21 @@ public class PauseOverlay {
     private int backgroundX, backgroundY, backgroundHeight, backgroundWidth;
     private SoundButton musicButton, sfxButton;
     private UrmButton menuButton, unpauseButton, replayButton;
+    private VolumeButton volumeButton;
 
     public PauseOverlay(Playing playing) {
         this.playing = playing;
         loadBackground();
         createSoundButtons();
         createUrmButtons();
-    } 
+        createVolumeButton();
+    }
+
+    private void createVolumeButton() {
+        int vX = (int) (309 * Game.SCALE);
+        int vY = (int) (278 * Game.SCALE);
+        volumeButton = new VolumeButton(vX, vY, SLIDER_WIDTH, VOLUME_HEIGHT);
+    }
 
     private void createUrmButtons() {
         int menuX = (int) (313 * Game.SCALE);
@@ -59,6 +68,7 @@ public class PauseOverlay {
         menuButton.update();
         replayButton.update();
         unpauseButton.update();
+        volumeButton.update();
     }
 
     public void draw(Graphics graphics) {
@@ -71,6 +81,8 @@ public class PauseOverlay {
         menuButton.draw(graphics);
         replayButton.draw(graphics);
         unpauseButton.draw(graphics);
+        //Volume slider
+        volumeButton.draw(graphics);
     }
 
     public void mouseDragged() {
