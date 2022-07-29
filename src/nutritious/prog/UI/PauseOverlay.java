@@ -1,5 +1,7 @@
 package nutritious.prog.UI;
 
+import nutritious.prog.gameStates.GameState;
+import nutritious.prog.gameStates.Playing;
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
 
@@ -11,12 +13,14 @@ import static nutritious.prog.utils.Constants.UI.PauseButtons.SOUND_BUTTON_SIZE;
 import static nutritious.prog.utils.Constants.UI.URMButtons.URM_BUTTON_SIZE;
 
 public class PauseOverlay {
+    private Playing playing;
     private BufferedImage backgroundImage;
     private int backgroundX, backgroundY, backgroundHeight, backgroundWidth;
     private SoundButton musicButton, sfxButton;
     private UrmButton menuButton, unpauseButton, replayButton;
 
-    public PauseOverlay() {
+    public PauseOverlay(Playing playing) {
+        this.playing = playing;
         loadBackground();
         createSoundButtons();
         createUrmButtons();
@@ -87,6 +91,12 @@ public class PauseOverlay {
             System.out.println("Music button pressed");
         } else if (isMouseOnButton(e, sfxButton)) {
             sfxButton.setMousePressed(true);
+        } else if(isMouseOnButton(e, menuButton)) {
+            menuButton.setMousePressed(true);
+        } else if (isMouseOnButton(e, replayButton)) {
+            replayButton.setMousePressed(true);
+        } else if (isMouseOnButton(e, unpauseButton)) {
+            unpauseButton.setMousePressed(true);
         }
     }
 
@@ -100,19 +110,42 @@ public class PauseOverlay {
             if(sfxButton.isMousePressed()) {
                 sfxButton.setMuted(!sfxButton.isMuted());
             }
+        } else if (isMouseOnButton(e, menuButton)) {
+            if (menuButton.isMousePressed()) {
+                GameState.state = GameState.MENU;
+                playing.unpauseGame();
+            }
+        } else if (isMouseOnButton(e, replayButton)) {
+            if (replayButton.isMousePressed())
+                System.out.println("replay lvl!");
+        } else if (isMouseOnButton(e, unpauseButton)) {
+            if (unpauseButton.isMousePressed())
+                playing.unpauseGame();
         }
         musicButton.resetBools();
         sfxButton.resetBools();
+        replayButton.resetBools();
+        unpauseButton.resetBools();
+        menuButton.resetBools();
     }
 
     public void mouseMoved(MouseEvent e) {
         musicButton.setMouseOver(false);
         sfxButton.setMouseOver(false);
+        menuButton.setMouseOver(false);
+        replayButton.setMouseOver(false);
+        unpauseButton.setMouseOver(false);
 
         if(isMouseOnButton(e, musicButton)) {
             musicButton.setMouseOver(true);
         } else if (isMouseOnButton(e, sfxButton)) {
             sfxButton.setMouseOver(true);
+        } else if (isMouseOnButton(e, menuButton)) {
+            menuButton.setMouseOver(true);
+        } else if (isMouseOnButton(e, unpauseButton)) {
+            unpauseButton.setMouseOver(true);
+        } else if (isMouseOnButton(e, replayButton)) {
+            replayButton.setMouseOver(true);
         }
     }
 
