@@ -90,7 +90,11 @@ public class Playing extends State implements StateMethods{
     public void draw(Graphics graphics) {
         levelManager.draw(graphics, xLvlOffset);
         player.render(graphics, xLvlOffset);
-        if(isPaused)pauseOverlay.draw(graphics);
+        if(isPaused) {
+            graphics.setColor(new Color(0,0,0, 150));
+            graphics.fillRect(0,0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
+            pauseOverlay.draw(graphics);
+        }
     }
 
     @Override
