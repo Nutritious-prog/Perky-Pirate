@@ -40,11 +40,11 @@ public class Player extends Entity {
         updateAnimationTick();
         setAnimation();
     }
-    public void render(@NotNull Graphics graphics) {
+    public void render(@NotNull Graphics graphics, int xLvlOffset) {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
-        graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset), (int)(hitbox.y - yDrawOffset), width, height,  null);
+        graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset) - xLvlOffset, (int)(hitbox.y - yDrawOffset), width, height,  null);
 //        drawHitbox(graphics);
     }
 
