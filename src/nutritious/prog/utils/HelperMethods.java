@@ -16,8 +16,9 @@ public class HelperMethods {
     }
 
     private static boolean IsSolid(float x, float y, int [][] levelData){
+        int maxWidth = levelData[0].length * Game.TILES_SIZE; // whole with of the level
         //check if we are inside of game boundaries
-        if(x < 0 || x >= Game.GAME_WIDTH) return true;
+        if(x < 0 || x >= maxWidth) return true;
         if(y < 0 || y >= Game.GAME_HEIGHT) return true;
 
         //we transform our (x,y) position to certain tile index (if tile size is 32 and our x == 100 we are in tile 4)
