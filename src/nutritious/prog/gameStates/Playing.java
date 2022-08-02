@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Random;
+
+import static nutritious.prog.utils.Constants.Environment.*;
 
 public class Playing extends State implements StateMethods{
     private Player player;
@@ -33,12 +36,24 @@ public class Playing extends State implements StateMethods{
     //conversion to pixels
     private int maxLvlOffsetX = maxTilesOffset * Game.TILES_SIZE;
 
-    private BufferedImage backgroundImage;
+    //background stuff
+    private BufferedImage backgroundImage, bigCloud, smallCLoud;
+    private int[] smallCloudPos; // random positions for small clouds
+    private Random rng = new Random();
     public Playing(Game game) {
         super(game);
         initClasses();
+        loadBackground();
+    }
 
+    public void loadBackground() {
         backgroundImage = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BACKGROUND_IMG);
+        bigCloud = LoadSave.GetSpriteAtlas(LoadSave.BIG_CLOUDS);
+        smallCLoud = LoadSave.GetSpriteAtlas(LoadSave.SMALL_CLOUDS);
+        smallCloudPos = new int[8];
+        for(int i =0; i < smallCloudPos.length; i++) {
+            smallCloudPos[i] = (int)(rng.nextInt((int)(120 * Game.SCALE)) + 70 * Game.SCALE);
+        }
     }
 
     private void initClasses() {
@@ -93,12 +108,23 @@ public class Playing extends State implements StateMethods{
     @Override
     public void draw(Graphics graphics) {
         graphics.drawImage(backgroundImage, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
+        drawClouds(graphics);
         levelManager.draw(graphics, xLvlOffset);
         player.render(graphics, xLvlOffset);
         if(isPaused) {
             graphics.setColor(new Color(0,0,0, 150));
             graphics.fillRect(0,0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
             pauseOverlay.draw(graphics);
+        }
+    }
+
+    private void drawClouds(Graphics graphics) {
+        //the level offset calculation is for cloud movement
+        for(int i = 0; i < LoadSave.GetLevelData()[0].length * Game.TILES_SIZE / BIG_CLOUD_WIDTH; i++) {
+            graphics.drawImage(bigCloud, i * BIG_CLOUD_WIDTH - (int)(xLvlOffset * 0.3), (int)(204 *  Game.SCALE), BIG_CLOUD_WIDTH, BIG_CLOUD_HEIGHT, null);
+        }
+        for(int i = 0; i <  smallCloudPos.length; i++) {
+            graphics.drawImage(smallCLoud, 50 + SMALL_CLOUD_WIDTH * 3 * i - (int)(xLvlOffset * 0.7), smallCloudPos[i], SMALL_CLOUD_WIDTH, SMALL_CLOUD_HEIGHT, null);
         }
     }
 
