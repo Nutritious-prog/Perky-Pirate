@@ -2,7 +2,6 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -40,7 +39,7 @@ public class Player extends Entity {
         updateAnimationTick();
         setAnimation();
     }
-    public void render(@NotNull Graphics graphics, int xLvlOffset) {
+    public void render(Graphics graphics, int xLvlOffset) {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
