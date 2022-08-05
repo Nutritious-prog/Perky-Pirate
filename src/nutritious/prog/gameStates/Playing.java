@@ -1,6 +1,7 @@
 package nutritious.prog.gameStates;
 
 import nutritious.prog.UI.PauseOverlay;
+import nutritious.prog.entities.EnemyManager;
 import nutritious.prog.entities.Player;
 import nutritious.prog.levels.LevelManager;
 import nutritious.prog.main.Game;
@@ -17,6 +18,7 @@ import static nutritious.prog.utils.Constants.Environment.*;
 public class Playing extends State implements StateMethods{
     private Player player;
     private LevelManager levelManager;
+    private EnemyManager enemyManager;
     private PauseOverlay pauseOverlay;
     private boolean isPaused = false;
 
@@ -58,6 +60,7 @@ public class Playing extends State implements StateMethods{
 
     private void initClasses() {
         levelManager = new LevelManager(game);
+        enemyManager = new EnemyManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         pauseOverlay = new PauseOverlay(this);
@@ -80,6 +83,7 @@ public class Playing extends State implements StateMethods{
         if (!isPaused) {
             levelManager.update();
             player.update();
+            enemyManager.update();
             checkIfPlayerIsCloseToBorder();
         } else {
             pauseOverlay.update();
@@ -111,6 +115,7 @@ public class Playing extends State implements StateMethods{
         drawClouds(graphics);
         levelManager.draw(graphics, xLvlOffset);
         player.render(graphics, xLvlOffset);
+        enemyManager.draw(graphics, xLvlOffset);
         if(isPaused) {
             graphics.setColor(new Color(0,0,0, 150));
             graphics.fillRect(0,0, Game.GAME_WIDTH, Game.GAME_HEIGHT);

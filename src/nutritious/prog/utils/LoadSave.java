@@ -1,5 +1,6 @@
 package nutritious.prog.utils;
 
+import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
 
 import javax.imageio.ImageIO;
@@ -7,6 +8,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+
+import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
 
 public class LoadSave {
     public static final String PLAYER_ATLAS = "player_sprites.png";
@@ -42,6 +46,27 @@ public class LoadSave {
         return img;
     }
 
+    //this method will search through the level atlas and
+    //find tiles that are marked for enemies
+    //(they will have different color (more explanation in GetLevelData() method))
+    public static ArrayList<Crabby> GetCrabs() {
+        BufferedImage img = GetSpriteAtlas(LEVEL_ONE_ATLAS);
+        ArrayList<Crabby> list = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++)
+            for (int i = 0; i < img.getWidth(); i++) {
+                //we go to file and get colors of pixels
+                Color color = new Color(img.getRGB(i, j));
+                //if we find a color with its green value equal CRABBY (0)
+                //we add crabby at that position
+                int value = color.getGreen();
+                if (value == CRABBY)
+                    //if we find a spot to place a crabby we add it to the list
+                    list.add(new Crabby(i * Game.TILES_SIZE, j * Game.TILES_SIZE));
+            }
+        return list;
+
+    }
+
     //displaying level as a two-dimensional array
     public static int[][] GetLevelData() {
         //initialising two-dimensional array for storing certain level tiles
@@ -50,6 +75,8 @@ public class LoadSave {
 
         //The size of the img will be the size of the lvl.
         //20 x 40 will make a lvl 20 tiles wide and 40 in height.
+        //each tile type is a represented by a different color in the level_data.png type files
+        //and depending on what color we get, we will print certain tile
         for(int j = 0; j < img.getHeight(); j++) {
             for(int i = 0; i < img.getWidth(); i++) {
                 Color color = new Color(img.getRGB(i,j));
