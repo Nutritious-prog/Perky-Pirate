@@ -44,7 +44,7 @@ public class Player extends Entity {
     private int healthBarYStart = (int) (14 * Game.SCALE);
 
     private int maxHealth = 100;
-    private int currentHealth = 40;
+    private int currentHealth = maxHealth;
     private int healthWidth = healthBarWidth;
 
     // AttackBox
@@ -57,8 +57,9 @@ public class Player extends Entity {
     private boolean attackChecked;
     private Playing playing;
 
-    public Player(float x, float y, int width, int height) {
+    public Player(float x, float y, int width, int height, Playing playing) {
         super(x, y, width, height);
+        this.playing = playing;
         loadAnimations();
         initHitbox(x, y, (int)(20 * Game.SCALE), (int)(27 * Game.SCALE)); //size of our characters body
         initAttackBox();
@@ -66,10 +67,26 @@ public class Player extends Entity {
 
     public void update() {
         updateHealthBar();
+        if(currentHealth <= 0) {
+            playing.setGameOver(true);
+            return;
+        }
         updateAttackBox();
         updatePosition();
+        if(isAttacking) {
+            checkAttack();
+        }
         updateAnimationTick();
         setAnimation();
+    }
+
+    private void checkAttack() {
+        //aniIndex 1 is where we check if enemy was in players attack hit box
+        if(attackChecked || animationIndex != 1) {
+            return;
+        }
+        attackChecked = true;
+        playing.checkedEnemyHit(attackBox);
     }
 
     public void render(Graphics graphics, int xLvlOffset) {
@@ -82,7 +99,7 @@ public class Player extends Entity {
                             width * flipW, height,  null);
 //      drawHitbox(graphics);
 
-        drawAttackBox(graphics, xLvlOffset);
+        //drawAttackBox(graphics, xLvlOffset);
         drawUI(graphics);
     }
 
@@ -157,6 +174,13 @@ public class Player extends Entity {
 
         if(isAttacking) {
             playerAction = ATTACK;
+            //we weren't attacking when we entered this method
+            if(startAnimation != ATTACK) {
+                //we set animationIndex to 1 to get faster attack (if we start from 0 animation frame character swigs his sword and only then attacks)
+                animationIndex = 1;
+                animationTick = 0;
+                return;
+            }
         }
 
         //if we changed animation we must reset the animationTick to start new animation from the  beginning
@@ -184,6 +208,7 @@ public class Player extends Entity {
             if(animationIndex >= GetSpriteAmount(playerAction)) {
                 animationIndex = 0;
                 isAttacking = false; // we want only one animation of attack per click (otherwise one click will cause infinite animation)
+                attackChecked = false;
             }
         }
     }
@@ -277,6 +302,21 @@ public class Player extends Entity {
         } else if (currentHealth >= maxHealth) {
             currentHealth = maxHealth;
         }
+    }
+
+    public void resetAll() {
+        resetDirBooleans();
+        inAir = false;
+        isAttacking = false;
+        isMoving = false;
+        playerAction = IDLE;
+        currentHealth = maxHealth;
+
+        hitbox.x = x;
+        hitbox.y = y;
+
+        if (!IsEntityOnTheFloor(hitbox, levelData))
+            inAir = true;
     }
 
     public void setAttacking(boolean isAttacking) {

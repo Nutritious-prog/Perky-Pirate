@@ -26,7 +26,7 @@ public class Crabby extends Enemy{
     }
 
     public void update(int[][] lvlData, Player player) {
-        updateMove(lvlData, player);
+        updateBehaviour(lvlData, player);
         updateAnimationTick();
         updateAttackBox();
     }
@@ -38,7 +38,7 @@ public class Crabby extends Enemy{
 
     /**method for changing behaviour of an enemy
      from idle to patrolling or chasing and attacking player*/
-    private void updateMove(int[][] lvlData, Player player){
+    private void updateBehaviour(int[][] lvlData, Player player){
         //we check if we are in the beginning of a game
         if(firstUpdate) {
             firstUpdateCheck(lvlData);
@@ -62,6 +62,18 @@ public class Crabby extends Enemy{
                         changeState(ATTACK);
                     }
                     move(lvlData);
+                    break;
+                case ATTACK:
+                    //at the beginning of each attack animation we reset attackChecked
+                    if(aniIndex == 0) {
+                        attackChecked = false;
+                    }
+                    //we only check if crabby hit when his claws are fully extended (3rd frame of animation)
+                    if(aniIndex == 3 && !attackChecked) {
+                        checkIfPlayerGotHit(attackBox, player);
+                    }
+                    break;
+                case GETTING_HIT:
                     break;
             }
         }

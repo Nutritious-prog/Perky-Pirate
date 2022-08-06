@@ -2,6 +2,8 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 
+import java.awt.geom.Rectangle2D;
+
 import static nutritious.prog.utils.Constants.Directions.*;
 import static nutritious.prog.utils.Constants.EnemyConstants.*;
 import static nutritious.prog.utils.HelperMethods.*;
@@ -27,10 +29,21 @@ public abstract class Enemy extends Entity{
     protected float attackDistance = Game.TILES_SIZE;
     protected float visualDistance = 5 * attackDistance;
 
+    //Health
+    protected int maxHealth;
+    protected int currentHealth;
+
+    protected boolean alive = true;
+
+    //attacking
+    protected boolean attackChecked;
+
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
         this.enemyType = enemyType;
         initHitbox(x, y, width, height);
+        maxHealth = GetMaxHealth(enemyType);
+        currentHealth = maxHealth;
     }
 
     protected void firstUpdateCheck(int[][] lvlData) {
@@ -126,12 +139,36 @@ public abstract class Enemy extends Entity{
         }
         if(aniIndex >= GetSpriteAmount(enemyType, enemyState)) {
             aniIndex = 0;
-            //as soon as we finish one animation on attack we go back to idle
+            //as soon as we finish one animation on attack we go back to idle,
             //and we check again if player is in range for attack
-            if(enemyState == ATTACK) {
-                enemyState = IDLE;
+            switch (enemyState) {
+                case ATTACK:
+                case GETTING_HIT:
+                    enemyState = IDLE;
+                    break;
+                case DEAD:
+                    alive = false;
+                    break;
             }
         }
+    }
+
+    //method operating getting hurt functionality
+    public void hurt(int dmg) {
+        currentHealth += -dmg;
+        if(currentHealth <= 0) {
+            changeState(DEAD);
+        } else {
+            changeState(GETTING_HIT);
+        }
+    }
+
+    protected void checkIfPlayerGotHit(Rectangle2D.Float attackBox, Player player) {
+        //if player is in enemy's hit box enemy deals damage
+        if(attackBox.intersects(player.hitbox)) {
+            player.changeHealth(-GetEnemyDmg(CRABBY));
+        }
+        attackChecked = true;
     }
 
     protected void changeWalkDir() {
@@ -147,5 +184,19 @@ public abstract class Enemy extends Entity{
     }
     public int getEnemyState() {
         return enemyState;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void resetEnemy() {
+        hitbox.x = x;
+        hitbox.y = y;
+        firstUpdate = true;
+        currentHealth = maxHealth;
+        changeState(IDLE);
+        alive = true;
+        fallSpeed = 0;
     }
 }
