@@ -28,6 +28,23 @@ public class Player extends Entity {
     private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
     private boolean inAir = false;
 
+    //status bar UI
+    private BufferedImage statusBarImg;
+
+    private int statusBarWidth = (int) (192 * Game.SCALE);
+    private int statusBarHeight = (int) (58 * Game.SCALE);
+    private int statusBarX = (int) (10 * Game.SCALE);
+    private int statusBarY = (int) (10 * Game.SCALE);
+
+    private int healthBarWidth = (int) (150 * Game.SCALE);
+    private int healthBarHeight = (int) (4 * Game.SCALE);
+    private int healthBarXStart = (int) (34 * Game.SCALE);
+    private int healthBarYStart = (int) (14 * Game.SCALE);
+
+    private int maxHealth = 100;
+    private int currentHealth = 40;
+    private int healthWidth = healthBarWidth;
+
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimations();
@@ -35,16 +52,33 @@ public class Player extends Entity {
     }
 
     public void update() {
+        updateHealthBar();
         updatePosition();
         updateAnimationTick();
         setAnimation();
     }
+
     public void render(Graphics graphics, int xLvlOffset) {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
         graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset) - xLvlOffset, (int)(hitbox.y - yDrawOffset), width, height,  null);
 //        drawHitbox(graphics);
+
+        drawUI(graphics);
+    }
+
+    private void updateHealthBar() {
+        //it calculates what percent of full hp is current hp and applies it to health bar red filling
+        healthWidth = (int)((currentHealth / (float)maxHealth) * healthBarWidth);
+    }
+
+    private void drawUI(Graphics graphics) {
+        //whole status bar image
+        graphics.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
+        //
+        graphics.setColor(Color.RED);
+        graphics.fillRect(healthBarXStart + statusBarX + 2, healthBarYStart + statusBarY, healthWidth, healthBarHeight);
     }
 
     private void loadAnimations() {
@@ -56,6 +90,8 @@ public class Player extends Entity {
                     animations[j][i] = img.getSubimage(i * 64, j*40, 64, 40);
                 }
             }
+
+            statusBarImg = LoadSave.GetSpriteAtlas(LoadSave.STATUS_BAR);
     }
 
     public void loadLevelData(int[][] levelData) {
@@ -189,6 +225,17 @@ public class Player extends Entity {
             hitbox.x += xSpeed;
         } else {
             hitbox.x = GetEntityXPosNextToWall(hitbox, xSpeed);
+        }
+    }
+
+    public void changeHealth(int value) {
+        currentHealth += value;
+
+        if(currentHealth <= 0) {
+            currentHealth = 0;
+            //TODO GameOver()
+        } else if (currentHealth >= maxHealth) {
+            currentHealth = maxHealth;
         }
     }
 
