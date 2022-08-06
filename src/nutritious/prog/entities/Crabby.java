@@ -2,18 +2,38 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
 import static nutritious.prog.utils.Constants.Directions.*;
 import static nutritious.prog.utils.Constants.EnemyConstants.*;
 
 public class Crabby extends Enemy{
+    // AttackBox
+    private Rectangle2D.Float attackBox;
+    private int attackBoxOffsetX;
+
     public Crabby(float x, float y) {
         super(x, y, CRABBY_WIDTH, CRABBY_HEIGHT, CRABBY);
         initHitbox(x, y, (int) (22 * Game.SCALE), (int) (19 * Game.SCALE));
+        initAttackBox();
+    }
+
+    private void initAttackBox() {
+        //30 (offset) + 22 (crabby) + 30 (offset) = 82 (whole width of attack hit box)
+        attackBox = new Rectangle2D.Float(x, y, (int)(82 * Game.SCALE), (int)(19 * Game.SCALE));
+        attackBoxOffsetX = (int)(Game.SCALE * 30);
     }
 
     public void update(int[][] lvlData, Player player) {
         updateMove(lvlData, player);
         updateAnimationTick();
+        updateAttackBox();
+    }
+
+    private void updateAttackBox() {
+        attackBox.x = hitbox.x - attackBoxOffsetX;
+        attackBox.y = hitbox.y;
     }
 
     /**method for changing behaviour of an enemy
@@ -45,6 +65,11 @@ public class Crabby extends Enemy{
                     break;
             }
         }
+    }
+
+    public void drawAttackBox(Graphics g, int xLvlOffset) {
+        g.setColor(Color.red);
+        g.drawRect((int) (attackBox.x - xLvlOffset), (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
     //this method is needed to add the width to print the image when we turn it to the other side
