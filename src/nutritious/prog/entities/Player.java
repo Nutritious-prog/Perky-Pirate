@@ -1,9 +1,11 @@
 package nutritious.prog.entities;
 
+import nutritious.prog.gameStates.Playing;
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static nutritious.prog.utils.Constants.PlayerConstants.*;
@@ -45,14 +47,25 @@ public class Player extends Entity {
     private int currentHealth = 40;
     private int healthWidth = healthBarWidth;
 
+    // AttackBox
+    private Rectangle2D.Float attackBox;
+
+    private int flipX = 0;
+    private int flipW = 1;
+
+    private boolean attackChecked;
+    private Playing playing;
+
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimations();
         initHitbox(x, y, (int)(20 * Game.SCALE), (int)(27 * Game.SCALE)); //size of our characters body
+        initAttackBox();
     }
 
     public void update() {
         updateHealthBar();
+        updateAttackBox();
         updatePosition();
         updateAnimationTick();
         setAnimation();
@@ -65,7 +78,26 @@ public class Player extends Entity {
         graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset) - xLvlOffset, (int)(hitbox.y - yDrawOffset), width, height,  null);
 //        drawHitbox(graphics);
 
+        drawAttackBox(graphics, xLvlOffset);
         drawUI(graphics);
+    }
+
+    private void drawAttackBox(Graphics graphics, int xLvlOffset) {
+        graphics.setColor(Color.red);
+        graphics.drawRect((int) attackBox.x - xLvlOffset, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
+    }
+
+    private void initAttackBox() {
+        attackBox = new Rectangle2D.Float(x, y, (int)(20 * Game.SCALE), (int)(20 * Game.SCALE));
+    }
+
+    private void updateAttackBox() {
+        if (right)
+            attackBox.x = hitbox.x + hitbox.width + (int) (Game.SCALE * 10); //max to the right of our character and offset
+        else if (left)
+            attackBox.x = hitbox.x - hitbox.width - (int) (Game.SCALE * 10); //max to the left of our character and offset
+
+        attackBox.y = hitbox.y + (Game.SCALE * 10);
     }
 
     private void updateHealthBar() {
