@@ -2,17 +2,19 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.geom.Rectangle2D;
 
 import static nutritious.prog.utils.Constants.Directions.*;
 import static nutritious.prog.utils.Constants.EnemyConstants.GetSpriteAmount;
-import static nutritious.prog.utils.Constants.EnemyConstants.*;
 import static nutritious.prog.utils.HelperMethods.*;
 
 public abstract class Enemy extends Entity{
+    //animations
     protected int aniIndex, enemyState, enemyType;
     protected int aniTick, aniSpeed = 25;
-    protected boolean firstUpdate = true;                 //beginning of a game
+
+    //beginning of a game
+    protected boolean firstUpdate = true;
 
     //falling
     protected boolean inAir = false;
@@ -21,6 +23,11 @@ public abstract class Enemy extends Entity{
     //patrolling
     protected float walkSpeed = 0.35f * Game.SCALE;
     protected int walkDir = LEFT;
+
+    //interaction with player
+    protected int tileY;
+    protected float attackDistance = Game.TILES_SIZE;
+    protected float visualDistance = 5 * attackDistance;
 
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
@@ -45,6 +52,8 @@ public abstract class Enemy extends Entity{
         else {
             inAir = false;
             hitbox.y = GetEntityYPosUnderRoofOrAboveTheFloor(hitbox, fallSpeed);
+            //enemies won't change their y position, so we just check it once they are on the ground
+            tileY = (int)(hitbox.y / Game.TILES_SIZE);
         }
     }
 
@@ -61,9 +70,39 @@ public abstract class Enemy extends Entity{
                 hitbox.x += xSpeed;
                 return;
             }
-
         changeWalkDir();
     }
+
+    /**
+     * method checking if enemy can see player and if it has a clear path
+     * to attack or chase him (there are no obstacles in between)
+     * */
+    protected boolean canSeePlayer(int[][] lvlData, Player player) {
+        int playerTileY = (int)(player.getHitbox().y / Game.TILES_SIZE);
+        //does player and enemy align horizontally
+        if(playerTileY == this.tileY) {
+            if(isPlayerInRange(player)) {
+                if(IsSightClear(lvlData, this.hitbox, player.hitbox, tileY)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private boolean isPlayerInRange(Player player) {
+        int distanceBetweenPlayerAndEnemy = Math.abs((int)(player.hitbox.x - this.hitbox.x));
+        return distanceBetweenPlayerAndEnemy <= visualDistance;
+    }
+
+    protected void changeState(int enemyState) {
+        this.enemyState = enemyState;
+        //resetting animations
+        aniTick = 0;
+        aniIndex = 0;
+    }
+
     protected void updateAnimationTick() {
         aniTick++;
         if(aniTick >= aniSpeed) {
