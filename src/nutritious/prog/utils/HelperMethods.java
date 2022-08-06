@@ -34,8 +34,8 @@ public class HelperMethods {
         return false;
     }
 
-    //used when can move here returns false, but we still have space to move to wall
-    //that is a fraction of our hitbox
+    /** used when can move here returns false, but we still have space to move to wall
+    that is a fraction of our hit ox*/
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
         //calculating on what tile are we at the moment
         int currentTile = (int)(hitbox.x / Game.TILES_SIZE);
@@ -73,5 +73,14 @@ public class HelperMethods {
             }
         }
         return true;
+    }
+
+    /** We just check the bottom-left of the enemy here +/- the xSpeed. We never check bottom right in case the
+        enemy is going to the right. It would be more correct checking the bottom-left for left direction and
+        bottom-right for the right direction. But it won't have big effect on the game. The enemy will simply change
+        direction sooner when there is an edge on the right side of the enemy, when it's going right.
+     */
+    public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData) {
+        return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
     }
 }
