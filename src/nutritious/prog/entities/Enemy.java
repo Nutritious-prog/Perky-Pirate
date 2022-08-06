@@ -2,10 +2,8 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 
-import java.awt.geom.Rectangle2D;
-
 import static nutritious.prog.utils.Constants.Directions.*;
-import static nutritious.prog.utils.Constants.EnemyConstants.GetSpriteAmount;
+import static nutritious.prog.utils.Constants.EnemyConstants.*;
 import static nutritious.prog.utils.HelperMethods.*;
 
 public abstract class Enemy extends Entity{
@@ -81,7 +79,7 @@ public abstract class Enemy extends Entity{
         int playerTileY = (int)(player.getHitbox().y / Game.TILES_SIZE);
         //does player and enemy align horizontally
         if(playerTileY == this.tileY) {
-            if(isPlayerInRange(player)) {
+            if(isPlayerInVisualRange(player)) {
                 if(IsSightClear(lvlData, this.hitbox, player.hitbox, tileY)) {
                     return true;
                 }
@@ -90,10 +88,27 @@ public abstract class Enemy extends Entity{
         return false;
     }
 
-
-    private boolean isPlayerInRange(Player player) {
+    protected boolean isPlayerInVisualRange(Player player) {
         int distanceBetweenPlayerAndEnemy = Math.abs((int)(player.hitbox.x - this.hitbox.x));
         return distanceBetweenPlayerAndEnemy <= visualDistance;
+    }
+
+    protected boolean isPlayerCloseForAttack(Player player) {
+        int distanceBetweenPlayerAndEnemy = Math.abs((int)(player.hitbox.x - this.hitbox.x));
+        return distanceBetweenPlayerAndEnemy <= attackDistance;
+    }
+
+    protected void turnTowardsPlayer(Player player) {
+        //changing direction depending on player position
+        if(player.hitbox.x > this.hitbox.x) {
+            walkDir = RIGHT;
+            //chase is faster than walk
+            walkSpeed = 0.7f;
+        } else {
+            walkDir = LEFT;
+            //chase is faster than walk
+            walkSpeed = 0.7f;
+        }
     }
 
     protected void changeState(int enemyState) {
@@ -111,6 +126,11 @@ public abstract class Enemy extends Entity{
         }
         if(aniIndex >= GetSpriteAmount(enemyType, enemyState)) {
             aniIndex = 0;
+            //as soon as we finish one animation on attack we go back to idle
+            //and we check again if player is in range for attack
+            if(enemyState == ATTACK) {
+                enemyState = IDLE;
+            }
         }
     }
 

@@ -12,14 +12,14 @@ public class Crabby extends Enemy{
         initHitbox(x, y, (int) (22 * Game.SCALE), (int) (19 * Game.SCALE));
     }
 
-    public void update(int[][] lvlData) {
-        updateMove(lvlData);
+    public void update(int[][] lvlData, Player player) {
+        updateMove(lvlData, player);
         updateAnimationTick();
     }
 
     /**method for changing behaviour of an enemy
      from idle to patrolling or chasing and attacking player*/
-    private void updateMove(int[][] lvlData){
+    private void updateMove(int[][] lvlData, Player player){
         //we check if we are in the beginning of a game
         if(firstUpdate) {
             firstUpdateCheck(lvlData);
@@ -35,6 +35,13 @@ public class Crabby extends Enemy{
                     changeState(RUNNING);
                     break;
                 case RUNNING:
+                    walkSpeed = 0.35f;
+                    if(canSeePlayer(lvlData, player)) {
+                        turnTowardsPlayer(player);
+                    }
+                    if(isPlayerCloseForAttack(player)) {
+                        changeState(ATTACK);
+                    }
                     move(lvlData);
                     break;
             }

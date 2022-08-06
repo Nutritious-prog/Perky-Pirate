@@ -91,8 +91,10 @@ public class HelperMethods {
     public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] levelData) {
         //we just check if all tiles between points are not solid
         for (int i = 0; i < xEnd - xStart; i++) {
+            //checking tiles in line of points
             if (IsTileSolid(xStart + i, y, levelData))
                 return false;
+            //checking tiles below line of points (to prevent entities from falling into holes)
             if (!IsTileSolid(xStart + i, y + 1, levelData))
                 return false;
         }
