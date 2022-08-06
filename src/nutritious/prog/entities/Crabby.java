@@ -2,9 +2,8 @@ package nutritious.prog.entities;
 
 import nutritious.prog.main.Game;
 
-import static nutritious.prog.utils.Constants.Directions.LEFT;
+import static nutritious.prog.utils.Constants.Directions.*;
 import static nutritious.prog.utils.Constants.EnemyConstants.*;
-import static nutritious.prog.utils.HelperMethods.*;
 
 public class Crabby extends Enemy{
     public Crabby(float x, float y) {
@@ -46,6 +45,23 @@ public class Crabby extends Enemy{
                     break;
             }
         }
+    }
+
+    //this method is needed to add the width to print the image when we turn it to the other side
+    public int flipX() {
+        if (walkDir == RIGHT)
+            return width;
+        else
+            return 0;
+    }
+
+    //this method will reverse the width so the picture is printed to the other side (left <=> right)
+    public int flipW() {
+        if (walkDir == RIGHT)
+            return -1;
+        else
+            return 1;
+
     }
 
 }
