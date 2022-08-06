@@ -50,6 +50,7 @@ public class Player extends Entity {
     // AttackBox
     private Rectangle2D.Float attackBox;
 
+    //for a mirror reflection of entities
     private int flipX = 0;
     private int flipW = 1;
 
@@ -75,8 +76,11 @@ public class Player extends Entity {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
-        graphics.drawImage(animations[playerAction][animationIndex], (int)(hitbox.x - xDrawOffset) - xLvlOffset, (int)(hitbox.y - yDrawOffset), width, height,  null);
-//        drawHitbox(graphics);
+        graphics.drawImage(animations[playerAction][animationIndex],
+                        (int)(hitbox.x - xDrawOffset) - xLvlOffset + flipX,
+                           (int)(hitbox.y - yDrawOffset),
+                            width * flipW, height,  null);
+//      drawHitbox(graphics);
 
         drawAttackBox(graphics, xLvlOffset);
         drawUI(graphics);
@@ -116,7 +120,7 @@ public class Player extends Entity {
     private void loadAnimations() {
             BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
             //loading sub images with all single animations frames to array
-            animations = new BufferedImage[9][6];
+            animations = new BufferedImage[7][8];
             for(int j = 0; j < animations.length; j++) {
                 for (int i = 0; i < animations[j].length; i++) {
                     animations[j][i] = img.getSubimage(i * 64, j*40, 64, 40);
@@ -152,7 +156,7 @@ public class Player extends Entity {
         }
 
         if(isAttacking) {
-            playerAction = ATTACK_1;
+            playerAction = ATTACK;
         }
 
         //if we changed animation we must reset the animationTick to start new animation from the  beginning
@@ -199,8 +203,12 @@ public class Player extends Entity {
         //checking if player is holding only one of two mutually exclusive buttons
         if (left && !right) {
             xSpeed = -playerSpeed;
+            flipX = width;                  //flip variables are used to invert the entity picture, so it faces the direction it walks
+            flipW = -1;
         } else if (right && !left) {
             xSpeed = playerSpeed;
+            flipX = 0;
+            flipW = 1;
         }
 
         //this block of code gets rid of the issue occurring
