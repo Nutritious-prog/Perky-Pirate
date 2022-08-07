@@ -3,6 +3,7 @@ package nutritious.prog.main;
 import nutritious.prog.gameStates.GameState;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.gameStates.Menu;
+import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
 
@@ -28,6 +29,8 @@ public class Game implements Runnable {
 
 
     public Game() {
+        LoadSave.GetAllLevels();
+
         initClasses();
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);

@@ -6,8 +6,11 @@ import nutritious.prog.main.Game;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
@@ -15,8 +18,6 @@ import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
 public class LoadSave {
     public static final String PLAYER_ATLAS = "player_sprites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
-//    public static final String LEVEL_ONE_ATLAS = "level_one_data.png";
-    public static final String LEVEL_ONE_ATLAS = "level_one_data_long.png";
     public static final String MENU_BUTTONS = "button_atlas.png";
     public static final String MENU_BACKGROUND = "menu_background.png";
     public static final String PAUSE_BACKGROUND = "pause_menu.png";
@@ -48,11 +49,48 @@ public class LoadSave {
         return img;
     }
 
+
+    public static BufferedImage[] GetAllLevels() {
+        URL url = LoadSave.class.getResource("/levelsResources");
+        File folder = null;
+
+        //retrieving folder with levels form res folder
+        try {
+            folder = new File(url.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        //list of all files in the folder
+        File[] files = folder.listFiles();
+        File[] filesSorted = new File[files.length];
+
+        //sorting files to be in order
+        for (int i = 0; i < filesSorted.length; i++)
+            for (int j = 0; j < files.length; j++) {
+                if (files[j].getName().equals("level_" + (i + 1) + ".png"))
+                    filesSorted[i] = files[j];
+
+            }
+
+        BufferedImage[] levelImages = new BufferedImage[filesSorted.length];
+
+        //reading images from sorted files
+        for (int i = 0; i < levelImages.length; i++)
+            try {
+                levelImages[i] = ImageIO.read(filesSorted[i]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        return levelImages;
+    }
+
     //this method will search through the level atlas and
     //find tiles that are marked for enemies
     //(they will have different color (more explanation in GetLevelData() method))
     public static ArrayList<Crabby> GetCrabs() {
-        BufferedImage img = GetSpriteAtlas(LEVEL_ONE_ATLAS);
+        BufferedImage img = GetSpriteAtlas(BIG_CLOUDS);
         ArrayList<Crabby> list = new ArrayList<>();
         for (int j = 0; j < img.getHeight(); j++)
             for (int i = 0; i < img.getWidth(); i++) {
@@ -72,7 +110,7 @@ public class LoadSave {
     //displaying level as a two-dimensional array
     public static int[][] GetLevelData() {
         //initialising two-dimensional array for storing certain level tiles
-        BufferedImage img = GetSpriteAtlas(LEVEL_ONE_ATLAS);
+        BufferedImage img = GetSpriteAtlas(BIG_CLOUDS);
         int[][] levelData = new int[img.getHeight()][img.getWidth()]; // the image is bigger than what we see on the screen
 
         //The size of the img will be the size of the lvl.
