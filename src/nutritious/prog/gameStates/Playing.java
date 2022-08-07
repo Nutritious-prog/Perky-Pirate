@@ -1,6 +1,7 @@
 package nutritious.prog.gameStates;
 
 import nutritious.prog.UI.GameOverOverlay;
+import nutritious.prog.UI.LevelCompletedOverlay;
 import nutritious.prog.UI.PauseOverlay;
 import nutritious.prog.entities.EnemyManager;
 import nutritious.prog.entities.Player;
@@ -23,6 +24,7 @@ public class Playing extends State implements StateMethods{
     private EnemyManager enemyManager;
     private PauseOverlay pauseOverlay;
     private GameOverOverlay gameOverOverlay;
+    private LevelCompletedOverlay levelCompletedOverlay;
     private boolean isPaused = false;
 
     //offset used to manipulate position of everything
@@ -47,6 +49,7 @@ public class Playing extends State implements StateMethods{
     private Random rng = new Random();
 
     private boolean gameOver = false;
+    private boolean lvlCompleted = true;
 
     public Playing(Game game) {
         super(game);
@@ -71,6 +74,7 @@ public class Playing extends State implements StateMethods{
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         pauseOverlay = new PauseOverlay(this);
         gameOverOverlay = new GameOverOverlay(this);
+        levelCompletedOverlay = new LevelCompletedOverlay(this);
     }
 
     public Player getPlayer() {
@@ -87,13 +91,15 @@ public class Playing extends State implements StateMethods{
 
     @Override
     public void update() {
-        if (!isPaused && !gameOver) {
+        if (isPaused) {
+            pauseOverlay.update();
+        } else if (lvlCompleted) {
+            levelCompletedOverlay.update();
+        } else if (!gameOver) {
             levelManager.update();
             player.update();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
             checkIfPlayerIsCloseToBorder();
-        } else {
-            pauseOverlay.update();
         }
     }
     //checking if player met left or right border and if we should move our level
@@ -129,6 +135,8 @@ public class Playing extends State implements StateMethods{
             pauseOverlay.draw(graphics);
         } else if(gameOver) {
             gameOverOverlay.draw(graphics);
+        } else if(lvlCompleted) {
+            levelCompletedOverlay.draw(graphics);
         }
     }
 
@@ -171,29 +179,31 @@ public class Playing extends State implements StateMethods{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(!gameOver) {
-            if (isPaused) {
-                System.out.println("mousePressedInPlaying");
+        if (!gameOver) {
+            if (isPaused)
                 pauseOverlay.mousePressed(e);
-            }
+            else if (lvlCompleted)
+                levelCompletedOverlay.mousePressed(e);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(!gameOver) {
-            if (isPaused) {
+        if (!gameOver) {
+            if (isPaused)
                 pauseOverlay.mouseReleased(e);
-            }
+            else if (lvlCompleted)
+                levelCompletedOverlay.mouseReleased(e);
         }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if(!gameOver) {
-            if (isPaused) {
+        if (!gameOver) {
+            if (isPaused)
                 pauseOverlay.mouseMoved(e);
-            }
+            else if (lvlCompleted)
+                levelCompletedOverlay.mouseMoved(e);
         }
     }
 
