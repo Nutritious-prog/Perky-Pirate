@@ -76,7 +76,7 @@ public class LevelCompletedOverlay {
             }
         } else if (isMouseOnButton(nextLvlButton, e))
             if (nextLvlButton.isMousePressed())
-                //playing.loadNextLevel();
+                playing.loadNextLevel();
 
         menuButton.resetBools();
         nextLvlButton.resetBools();

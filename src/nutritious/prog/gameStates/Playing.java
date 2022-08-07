@@ -33,15 +33,8 @@ public class Playing extends State implements StateMethods{
     //to display further and "move the camera"
     private int leftBorder = (int) (0.2 * Game.GAME_WIDTH);
     private int rightBorder = (int) (0.8 * Game.GAME_WIDTH);
-    //we only want to move our level as far as it has its boundaries,
-    //we don't want to exceed them and go into darkness
-    //so we create max offset our level can go
-    private int lvlTilesWide = LoadSave.GetLevelData()[0].length;
-    //the offset is calculated by subtracting our visible game part from the
-    //whole levels length
-    private int maxTilesOffset = lvlTilesWide - Game.TILES_IN_WIDTH;
-    //conversion to pixels
-    private int maxLvlOffsetX = maxTilesOffset * Game.TILES_SIZE;
+
+      private int maxLvlOffsetX;
 
     //background stuff
     private BufferedImage backgroundImage, bigCloud, smallCLoud;
@@ -49,12 +42,29 @@ public class Playing extends State implements StateMethods{
     private Random rng = new Random();
 
     private boolean gameOver = false;
-    private boolean lvlCompleted = true;
+    private boolean lvlCompleted = false;
 
     public Playing(Game game) {
         super(game);
         initClasses();
         loadBackground();
+
+        calcLvlOffset();
+        loadStartLevel();
+    }
+
+    public void loadNextLevel() {
+        resetAll();
+        levelManager.loadNextLevel();
+        player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
+    }
+
+    private void loadStartLevel() {
+        enemyManager.loadEnemies(levelManager.getCurrentLevel());
+    }
+
+    private void calcLvlOffset() {
+        maxLvlOffsetX = levelManager.getCurrentLevel().getLvlOffset();
     }
 
     public void loadBackground() {
@@ -72,9 +82,14 @@ public class Playing extends State implements StateMethods{
         enemyManager = new EnemyManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE), this);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
+        player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
         pauseOverlay = new PauseOverlay(this);
         gameOverOverlay = new GameOverOverlay(this);
         levelCompletedOverlay = new LevelCompletedOverlay(this);
+    }
+
+    public EnemyManager getEnemyManager() {
+        return enemyManager;
     }
 
     public Player getPlayer() {
@@ -142,7 +157,7 @@ public class Playing extends State implements StateMethods{
 
     private void drawClouds(Graphics graphics) {
         //the level offset calculation is for cloud movement
-        for(int i = 0; i < LoadSave.GetLevelData()[0].length * Game.TILES_SIZE / BIG_CLOUD_WIDTH; i++) {
+        for(int i = 0; i < 3; i++) {
             graphics.drawImage(bigCloud, i * BIG_CLOUD_WIDTH - (int)(xLvlOffset * 0.3), (int)(204 *  Game.SCALE), BIG_CLOUD_WIDTH, BIG_CLOUD_HEIGHT, null);
         }
         for(int i = 0; i <  smallCloudPos.length; i++) {
@@ -150,10 +165,13 @@ public class Playing extends State implements StateMethods{
         }
     }
 
+    public void setMaxLvlOffset(int lvlOffset) {
+        this.maxLvlOffsetX = lvlOffset;
+    }
 
     public void resetAll() {
         //TODO reset player, enemy, lvl etc.
-        gameOver = false;
+        lvlCompleted = false;
         gameOver = false;
         isPaused = false;
         player.resetAll();
@@ -253,4 +271,7 @@ public class Playing extends State implements StateMethods{
         }
     }
 
+    public void setLevelCompleted(boolean levelCompleted) {
+        this.lvlCompleted = levelCompleted;
+    }
 }

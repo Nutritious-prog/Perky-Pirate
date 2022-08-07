@@ -86,45 +86,4 @@ public class LoadSave {
         return levelImages;
     }
 
-    //this method will search through the level atlas and
-    //find tiles that are marked for enemies
-    //(they will have different color (more explanation in GetLevelData() method))
-    public static ArrayList<Crabby> GetCrabs() {
-        BufferedImage img = GetSpriteAtlas(BIG_CLOUDS);
-        ArrayList<Crabby> list = new ArrayList<>();
-        for (int j = 0; j < img.getHeight(); j++)
-            for (int i = 0; i < img.getWidth(); i++) {
-                //we go to file and get colors of pixels
-                Color color = new Color(img.getRGB(i, j));
-                //if we find a color with its green value equal CRABBY (0)
-                //we add crabby at that position
-                int value = color.getGreen();
-                if (value == CRABBY)
-                    //if we find a spot to place a crabby we add it to the list
-                    list.add(new Crabby(i * Game.TILES_SIZE, j * Game.TILES_SIZE));
-            }
-        return list;
-
-    }
-
-    //displaying level as a two-dimensional array
-    public static int[][] GetLevelData() {
-        //initialising two-dimensional array for storing certain level tiles
-        BufferedImage img = GetSpriteAtlas(BIG_CLOUDS);
-        int[][] levelData = new int[img.getHeight()][img.getWidth()]; // the image is bigger than what we see on the screen
-
-        //The size of the img will be the size of the lvl.
-        //20 x 40 will make a lvl 20 tiles wide and 40 in height.
-        //each tile type is a represented by a different color in the level_data.png type files
-        //and depending on what color we get, we will print certain tile
-        for(int j = 0; j < img.getHeight(); j++) {
-            for(int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i,j));
-                int value = color.getRed();  // this color will represent index of a sprite in an array
-                if(value >= 48) value = 0;  // checking if value is not bigger than our sprites array
-                levelData[j][i] = value;
-            }
-        }
-        return levelData;
-    }
 }

@@ -1,6 +1,7 @@
 package nutritious.prog.entities;
 
 import nutritious.prog.gameStates.Playing;
+import nutritious.prog.levels.Level;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
@@ -18,18 +19,23 @@ public class EnemyManager {
     public EnemyManager(Playing playing) {
         this.playing = playing;
         loadEnemyImgs();
-        addEnemies();
     }
 
-    private void addEnemies() {
-        crabbies = LoadSave.GetCrabs();
-        System.out.println("size of crabs: " + crabbies.size());
+    public void loadEnemies(Level level) {
+        crabbies = level.getCrabs();
     }
 
     public void update(int[][] lvlData, Player player) {
+        boolean isAnyEnemyAlive = false;
         for (Crabby c : crabbies)
-            if(c.isAlive())
+            if(c.isAlive()) {
                 c.update(lvlData, player);
+                //if we find an enemy we change value of alive enemies
+                isAnyEnemyAlive = true;
+            }
+        if(!isAnyEnemyAlive) {
+            playing.setLevelCompleted(true);
+        }
     }
 
     public void draw(Graphics g, int xLvlOffset) {

@@ -1,22 +1,48 @@
 package nutritious.prog.levels;
 
+import nutritious.prog.gameStates.GameState;
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import static nutritious.prog.main.Game.TILES_SIZE;
 
 public class LevelManager {
     private Game game;
     private BufferedImage[] levelSprite;
-    private Level levelOne;
+    private ArrayList<Level> levels;
+    private int lvlIndex = 0;
 
     public LevelManager(Game game) {
         this.game = game;
         importOutsideSprites();
-        levelOne = new Level(LoadSave.GetLevelData());
+        levels = new ArrayList<>();
+        buildAllLevels();
+    }
+
+    public void loadNextLevel() {
+        lvlIndex++;
+        if (lvlIndex >= levels.size()) {
+            //TODO Game completed screen
+            lvlIndex = 0;
+            System.out.println("No more levels! Game Completed!");
+            GameState.state = GameState.MENU;
+        }
+
+        Level newLevel = levels.get(lvlIndex);
+        game.getPlaying().getEnemyManager().loadEnemies(newLevel);
+        game.getPlaying().getPlayer().loadLevelData(newLevel.getLevelData());
+        game.getPlaying().setMaxLvlOffset(newLevel.getLvlOffset());
+    }
+
+    private void buildAllLevels() {
+        BufferedImage[] allLevels = LoadSave.GetAllLevels();
+        for (BufferedImage img : allLevels)
+            levels.add(new Level(img));
     }
 
     private void importOutsideSprites() {
@@ -32,8 +58,8 @@ public class LevelManager {
 
     public void draw(Graphics graphics, int xLvlOffset) {
         for(int j = 0; j < Game.TILES_IN_HEIGHT; j++) {
-            for (int i = 0; i < levelOne.getLevelData()[0].length; i++) {
-                int index = levelOne.getSpriteIndex(i, j);
+            for (int i = 0; i < levels.get(lvlIndex).getLevelData()[0].length; i++) {
+                int index = levels.get(lvlIndex).getSpriteIndex(i, j);
                 graphics.drawImage(levelSprite[index], i * TILES_SIZE - xLvlOffset, j * TILES_SIZE, TILES_SIZE, TILES_SIZE, null);
             }
         }
@@ -42,6 +68,10 @@ public class LevelManager {
     public void update() {}
 
     public Level getCurrentLevel(){
-        return levelOne;
+        return levels.get(lvlIndex);
+    }
+
+    public int getAmountOfLevels() {
+        return levels.size();
     }
 }

@@ -1,8 +1,15 @@
 package nutritious.prog.utils;
 
+import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
 
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
+import static nutritious.prog.utils.LoadSave.*;
 
 public class HelperMethods {
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] levelData) {
@@ -114,6 +121,55 @@ public class HelperMethods {
             return IsAllTilesWalkable(secondXTile, firstXTile, yTile, levelData);
         else
             return IsAllTilesWalkable(firstXTile, secondXTile, yTile, levelData);
+    }
 
+    //displaying level as a two-dimensional array
+    //we pass an image and retrieve level data
+    public static int[][] GetLevelData(BufferedImage levelImage) {
+        int[][] levelData = new int[levelImage.getHeight()][levelImage.getWidth()]; // the image is bigger than what we see on the screen
+
+        //The size of the img will be the size of the lvl.
+        //20 x 40 will make a lvl 20 tiles wide and 40 in height.
+        //each tile type is a represented by a different color in the level_data.png type files
+        //and depending on what color we get, we will print certain tile
+        for(int j = 0; j < levelImage.getHeight(); j++) {
+            for(int i = 0; i < levelImage.getWidth(); i++) {
+                Color color = new Color(levelImage.getRGB(i,j));
+                int value = color.getRed();  // this color will represent index of a sprite in an array
+                if(value >= 48) value = 0;  // checking if value is not bigger than our sprites array
+                levelData[j][i] = value;
+            }
+        }
+        return levelData;
+    }
+
+    //this method will search through the level atlas and
+    //find tiles that are marked for enemies
+    //(they will have different color (more explanation in GetLevelData() method))
+    public static ArrayList<Crabby> GetCrabs(BufferedImage levelImage) {
+        ArrayList<Crabby> list = new ArrayList<>();
+        for (int j = 0; j < levelImage.getHeight(); j++)
+            for (int i = 0; i < levelImage.getWidth(); i++) {
+                //we go to file and get colors of pixels
+                Color color = new Color(levelImage.getRGB(i, j));
+                //if we find a color with its green value equal CRABBY (0)
+                //we add crabby at that position
+                int value = color.getGreen();
+                if (value == CRABBY)
+                    //if we find a spot to place a crabby we add it to the list
+                    list.add(new Crabby(i * Game.TILES_SIZE, j * Game.TILES_SIZE));
+            }
+        return list;
+    }
+
+    public static Point GetPlayerSpawn(BufferedImage img) {
+        for (int j = 0; j < img.getHeight(); j++)
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getGreen();
+                if (value == 100)
+                    return new Point(i * Game.TILES_SIZE, j * Game.TILES_SIZE);
+            }
+        return new Point(1 * Game.TILES_SIZE, 1 * Game.TILES_SIZE);
     }
 }

@@ -65,6 +65,13 @@ public class Player extends Entity {
         initAttackBox();
     }
 
+    public void setSpawn(Point spawn) {
+        this.x = spawn.x;
+        this.y = spawn.y;
+        hitbox.x = x;
+        hitbox.y = y;
+    }
+
     public void update() {
         updateHealthBar();
         if(currentHealth <= 0) {
