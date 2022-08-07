@@ -360,6 +360,8 @@ public class Player extends Entity {
         right = false;
         up = false;
         down = false;
+        flipX = 0;
+        flipW = 1;
     }
 
     public void setJump(boolean jump) {

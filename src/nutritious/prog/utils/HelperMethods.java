@@ -81,8 +81,11 @@ public class HelperMethods {
         bottom-right for the right direction. But it won't have big effect on the game. The enemy will simply change
         direction sooner when there is an edge on the right side of the enemy, when it's going right.
      */
-    public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] levelData) {
-        return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, levelData);
+    public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData) {
+        if (xSpeed > 0)
+            return IsSolid(hitbox.x + hitbox.width + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+        else
+            return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
     }
 
     /**

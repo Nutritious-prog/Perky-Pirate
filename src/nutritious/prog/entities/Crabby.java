@@ -57,10 +57,11 @@ public class Crabby extends Enemy{
                     walkSpeed = 0.35f;
                     if(canSeePlayer(lvlData, player)) {
                         turnTowardsPlayer(player);
+                        if(isPlayerCloseForAttack(player)) {
+                            changeState(ATTACK);
+                        }
                     }
-                    if(isPlayerCloseForAttack(player)) {
-                        changeState(ATTACK);
-                    }
+
                     move(lvlData);
                     break;
                 case ATTACK:
