@@ -6,32 +6,23 @@ import java.awt.geom.Rectangle2D;
 
 import static nutritious.prog.utils.Constants.Directions.*;
 import static nutritious.prog.utils.Constants.EnemyConstants.*;
+import static nutritious.prog.utils.Constants.EntityConstants.ANI_TIME;
+import static nutritious.prog.utils.Constants.EntityConstants.GRAVITY;
 import static nutritious.prog.utils.HelperMethods.*;
 
 public abstract class Enemy extends Entity{
-    //animations
-    protected int aniIndex, enemyState, enemyType;
-    protected int aniTick, aniSpeed = 25;
+    protected int enemyType;
 
     //beginning of a game
     protected boolean firstUpdate = true;
 
-    //falling
-    protected boolean inAir = false;
-    protected float fallSpeed, gravity = 0.04f * Game.SCALE;
-
     //patrolling
-    protected float walkSpeed = 0.35f * Game.SCALE;
     protected int walkDir = LEFT;
 
     //interaction with player
     protected int tileY;
     protected float attackDistance = Game.TILES_SIZE;
     protected float visualDistance = 5 * attackDistance;
-
-    //Health
-    protected int maxHealth;
-    protected int currentHealth;
 
     protected boolean alive = true;
 
@@ -41,7 +32,7 @@ public abstract class Enemy extends Entity{
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
         this.enemyType = enemyType;
-        initHitbox(x, y, width, height);
+        this.walkSpeed = 0.35f * Game.SCALE;
         maxHealth = GetMaxHealth(enemyType);
         currentHealth = maxHealth;
     }
@@ -55,14 +46,14 @@ public abstract class Enemy extends Entity{
 
     protected void updateInAir(int[][] lvlData) {
         //falling
-        if(CanMoveHere(hitbox.x, hitbox.y + fallSpeed, hitbox.width, hitbox.height, lvlData)) {
-            hitbox.y += fallSpeed;
-            fallSpeed += gravity;
+        if(CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData)) {
+            hitbox.y += airSpeed;
+            airSpeed += GRAVITY;
         }
         //we are on the ground
         else {
             inAir = false;
-            hitbox.y = GetEntityYPosUnderRoofOrAboveTheFloor(hitbox, fallSpeed);
+            hitbox.y = GetEntityYPosUnderRoofOrAboveTheFloor(hitbox, airSpeed);
             //enemies won't change their y position, so we just check it once they are on the ground
             tileY = (int)(hitbox.y / Game.TILES_SIZE);
         }
@@ -125,26 +116,26 @@ public abstract class Enemy extends Entity{
     }
 
     protected void changeState(int enemyState) {
-        this.enemyState = enemyState;
+        this.state = enemyState;
         //resetting animations
-        aniTick = 0;
-        aniIndex = 0;
+        animationTick = 0;
+        animationIndex = 0;
     }
 
     protected void updateAnimationTick() {
-        aniTick++;
-        if(aniTick >= aniSpeed) {
-            aniTick = 0;
-            aniIndex++;
+        animationTick++;
+        if(animationTick >= ANI_TIME) {
+            animationTick = 0;
+            animationIndex++;
         }
-        if(aniIndex >= GetSpriteAmount(enemyType, enemyState)) {
-            aniIndex = 0;
+        if(animationIndex >= GetSpriteAmount(enemyType, state)) {
+            animationIndex = 0;
             //as soon as we finish one animation on attack we go back to idle,
             //and we check again if player is in range for attack
-            switch (enemyState) {
+            switch (state) {
                 case ATTACK:
                 case GETTING_HIT:
-                    enemyState = IDLE;
+                    state = IDLE;
                     break;
                 case DEAD:
                     alive = false;
@@ -179,13 +170,6 @@ public abstract class Enemy extends Entity{
 
     }
 
-    public int getAniIndex() {
-        return aniIndex;
-    }
-    public int getEnemyState() {
-        return enemyState;
-    }
-
     public boolean isAlive() {
         return alive;
     }
@@ -197,6 +181,6 @@ public abstract class Enemy extends Entity{
         currentHealth = maxHealth;
         changeState(IDLE);
         alive = true;
-        fallSpeed = 0;
+        airSpeed = 0;
     }
 }

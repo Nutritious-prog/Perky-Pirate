@@ -3,6 +3,10 @@ package nutritious.prog.utils;
 import nutritious.prog.main.Game;
 
 public class Constants {
+    public static class EntityConstants {
+        public static final float GRAVITY = 0.04f * Game.SCALE;
+        public static final int ANI_TIME = 25;
+    }
     public static class EnemyConstants {
         public static final int CRABBY = 0;
 

@@ -8,60 +8,55 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import static nutritious.prog.utils.Constants.EntityConstants.ANI_TIME;
+import static nutritious.prog.utils.Constants.EntityConstants.GRAVITY;
 import static nutritious.prog.utils.Constants.PlayerConstants.*;
 import static nutritious.prog.utils.HelperMethods.*;
 
 public class Player extends Entity {
     private BufferedImage[][] animations;
-    private int animationTick, animationIndex, animationTime = 25;
-    private int playerAction = IDLE;
-    private boolean up, down, left, right, jump;
+    private boolean left, right, jump;
     private boolean isMoving = false, isAttacking = false;
-    private float playerSpeed = 1.0f * Game.SCALE;
     private int[][] levelData;
     //offsets from top left corner of whole image to top left corner of our character (big hitBox to small hitBox)
-    private float xDrawOffset = 21 * Game.SCALE;
-    private float yDrawOffset = 4 * Game.SCALE;
+    private final float xDrawOffset = 21 * Game.SCALE;
+    private final float yDrawOffset = 4 * Game.SCALE;
 
     //Jumping and gravity variables
-    private float airSpeed = 0f;
-    private float gravity = 0.04f * Game.SCALE;
-    private float jumpSpeed = -2.25f * Game.SCALE;
-    private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
-    private boolean inAir = false;
+    private final float jumpSpeed = -2.25f * Game.SCALE;
+    private final float fallSpeedAfterCollision = 0.5f * Game.SCALE;
 
     //status bar UI
     private BufferedImage statusBarImg;
 
-    private int statusBarWidth = (int) (192 * Game.SCALE);
-    private int statusBarHeight = (int) (58 * Game.SCALE);
-    private int statusBarX = (int) (10 * Game.SCALE);
-    private int statusBarY = (int) (10 * Game.SCALE);
+    private final int statusBarWidth = (int) (192 * Game.SCALE);
+    private final int statusBarHeight = (int) (58 * Game.SCALE);
+    private final int statusBarX = (int) (10 * Game.SCALE);
+    private final int statusBarY = (int) (10 * Game.SCALE);
 
-    private int healthBarWidth = (int) (150 * Game.SCALE);
-    private int healthBarHeight = (int) (4 * Game.SCALE);
-    private int healthBarXStart = (int) (34 * Game.SCALE);
-    private int healthBarYStart = (int) (14 * Game.SCALE);
+    private final int healthBarWidth = (int) (150 * Game.SCALE);
+    private final int healthBarHeight = (int) (4 * Game.SCALE);
+    private final int healthBarXStart = (int) (34 * Game.SCALE);
+    private final int healthBarYStart = (int) (14 * Game.SCALE);
 
-    private int maxHealth = 100;
-    private int currentHealth = maxHealth;
     private int healthWidth = healthBarWidth;
-
-    // AttackBox
-    private Rectangle2D.Float attackBox;
 
     //for a mirror reflection of entities
     private int flipX = 0;
     private int flipW = 1;
 
     private boolean attackChecked;
-    private Playing playing;
+    private final Playing playing;
 
     public Player(float x, float y, int width, int height, Playing playing) {
         super(x, y, width, height);
         this.playing = playing;
+        this.state = IDLE;
+        this.maxHealth = 100;
+        this.currentHealth = this.maxHealth;
+        this.walkSpeed = 1.0f * Game.SCALE;
         loadAnimations();
-        initHitbox(x, y, (int)(20 * Game.SCALE), (int)(27 * Game.SCALE)); //size of our characters body
+        initHitbox(20, 27); //size of our characters body
         initAttackBox();
     }
 
@@ -100,7 +95,7 @@ public class Player extends Entity {
         //we retrieve animation frames by giving the array parameters of
         //current player action (in each row of our sprites map we contain different animations)
         //current animation index (in each column of our sprites map we contain different frame of certain animation)
-        graphics.drawImage(animations[playerAction][animationIndex],
+        graphics.drawImage(animations[state][animationIndex],
                         (int)(hitbox.x - xDrawOffset) - xLvlOffset + flipX,
                            (int)(hitbox.y - yDrawOffset),
                             width * flipW, height,  null);
@@ -108,11 +103,6 @@ public class Player extends Entity {
 
         //drawAttackBox(graphics, xLvlOffset);
         drawUI(graphics);
-    }
-
-    private void drawAttackBox(Graphics graphics, int xLvlOffset) {
-        graphics.setColor(Color.red);
-        graphics.drawRect((int) attackBox.x - xLvlOffset, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
     private void initAttackBox() {
@@ -163,24 +153,24 @@ public class Player extends Entity {
     }
 
     private void setAnimation() {
-        int startAnimation = playerAction;
+        int startAnimation = state;
 
         if(isMoving) {
-            playerAction = RUNNING;
+            state = RUNNING;
         } else {
-            playerAction = IDLE;
+            state = IDLE;
         }
 
         if(inAir) {
             if(airSpeed < 0) {
-                playerAction = JUMP;
+                state = JUMP;
             } else {
-                playerAction = FALLING;
+                state = FALLING;
             }
         }
 
         if(isAttacking) {
-            playerAction = ATTACK;
+            state = ATTACK;
             //we weren't attacking when we entered this method
             if(startAnimation != ATTACK) {
                 //we set animationIndex to 1 to get faster attack (if we start from 0 animation frame character swigs his sword and only then attacks)
@@ -191,7 +181,7 @@ public class Player extends Entity {
         }
 
         //if we changed animation we must reset the animationTick to start new animation from the  beginning
-        if(startAnimation != playerAction) {
+        if(startAnimation != state) {
             resetAnimationTick();
         }
     }
@@ -206,13 +196,13 @@ public class Player extends Entity {
         animationTick++;
         //we check if our one frame of animation lasted enough time and if so
         //we reset the counter and increment animationIndex to move to next frame of animation
-        if(animationTick >= animationTime) {
+        if(animationTick >= ANI_TIME) {
             animationTick = 0;
             animationIndex++;
             //if we reached the end of an array with animation frames we go back to its beginning,
             //and we replay the animation again
             //we set length of the row in array depending on players current action
-            if(animationIndex >= GetSpriteAmount(playerAction)) {
+            if(animationIndex >= GetSpriteAmount(state)) {
                 animationIndex = 0;
                 isAttacking = false; // we want only one animation of attack per click (otherwise one click will cause infinite animation)
                 attackChecked = false;
@@ -234,11 +224,11 @@ public class Player extends Entity {
 
         //checking if player is holding only one of two mutually exclusive buttons
         if (left && !right) {
-            xSpeed = -playerSpeed;
+            xSpeed = -walkSpeed;
             flipX = width;                  //flip variables are used to invert the entity picture, so it faces the direction it walks
             flipW = -1;
         } else if (right && !left) {
-            xSpeed = playerSpeed;
+            xSpeed = walkSpeed;
             flipX = 0;
             flipW = 1;
         }
@@ -260,7 +250,7 @@ public class Player extends Entity {
                 //we are adding decreasing value of airSpeed to jump (gravity is making it smaller and smaller)
                 //until we hit airSpeed == 0, and then we start falling
                 hitbox.y += airSpeed;
-                airSpeed += gravity;
+                airSpeed += GRAVITY;
                 updateXPos(xSpeed);
             } else {                  // if not we met an obstacle
                 hitbox.y = GetEntityYPosUnderRoofOrAboveTheFloor(hitbox, airSpeed);     //we hit floor or the roof
@@ -316,7 +306,7 @@ public class Player extends Entity {
         inAir = false;
         isAttacking = false;
         isMoving = false;
-        playerAction = IDLE;
+        state = IDLE;
         currentHealth = maxHealth;
 
         hitbox.x = x;
@@ -328,22 +318,6 @@ public class Player extends Entity {
 
     public void setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
-    }
-
-    public boolean isUp() {
-        return up;
-    }
-
-    public void setUp(boolean up) {
-        this.up = up;
-    }
-
-    public boolean isDown() {
-        return down;
-    }
-
-    public void setDown(boolean down) {
-        this.down = down;
     }
 
     public boolean isLeft() {
@@ -365,8 +339,6 @@ public class Player extends Entity {
     public void resetDirBooleans() {
         left = false;
         right = false;
-        up = false;
-        down = false;
         flipX = 0;
         flipW = 1;
     }
