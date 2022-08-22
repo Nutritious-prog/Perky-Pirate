@@ -25,6 +25,40 @@ public class ObjectManager {
         boxContainers = new ArrayList<>();
     }
 
+    //this method will check if player touched the potions (if so, we change certain values - applyEffectToPlayer() method)
+    public void checkIfObjectGotTouched(Rectangle2D.Float hitbox) {
+        for (Potion p : potions)
+            if (p.isActive()) {
+                if (hitbox.intersects(p.getHitbox())) {
+                    p.setActive(false);
+                    applyEffectToPlayer(p);
+                }
+            }
+    }
+
+    public void applyEffectToPlayer(Potion p) {
+        if (p.getObjectType() == RED_POTION)
+            playing.getPlayer().changeHealth(RED_POTION_VALUE);
+        else
+            playing.getPlayer().changePower(BLUE_POTION_VALUE);
+    }
+
+    public void checkIfObjectGotHit(Rectangle2D.Float attackbox) {
+        for (BoxContainer bc : boxContainers)
+            if (bc.isActive()) {
+                if (bc.getHitbox().intersects(attackbox)) {
+                    //we animate containers only when they get destroyed
+                    bc.setAnimation(true);
+                    int type = 0;
+                    //if container gets destroyed it drops one potion
+                    if (bc.getObjectType() == BARREL)
+                        type = 1;
+                    potions.add(new Potion((int) (bc.getHitbox().x + bc.getHitbox().width / 3), (int) (bc.getHitbox().y - bc.getHitbox().height / 8), type));
+                    return;
+                }
+            }
+    }
+
     public void loadObjects(Level newLevel) {
         potions = newLevel.getPotions();
         boxContainers = newLevel.getBoxContainers();

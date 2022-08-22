@@ -69,17 +69,28 @@ public class Player extends Entity {
 
     public void update() {
         updateHealthBar();
+
         if(currentHealth <= 0) {
             playing.setGameOver(true);
             return;
         }
+
         updateAttackBox();
         updatePosition();
+
+        if(isMoving) {
+            checkIfPotionIsTouched();
+        }
         if(isAttacking) {
             checkAttack();
         }
+
         updateAnimationTick();
         setAnimation();
+    }
+
+    private void checkIfPotionIsTouched() {
+        playing.checkIfPotionIsTouched(hitbox);
     }
 
     private void checkAttack() {
@@ -88,7 +99,8 @@ public class Player extends Entity {
             return;
         }
         attackChecked = true;
-        playing.checkedEnemyHit(attackBox);
+        playing.checkIfEnemyGotHit(attackBox);
+        playing.checkIfObjectGotHit(attackBox);
     }
 
     public void render(Graphics graphics, int xLvlOffset) {
@@ -348,5 +360,6 @@ public class Player extends Entity {
     }
 
     public void changePower(int bluePotionValue) {
+        //TODO power and power attack mechanics
     }
 }

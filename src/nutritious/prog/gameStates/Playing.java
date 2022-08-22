@@ -187,14 +187,31 @@ public class Playing extends State implements StateMethods{
         isPaused = false;
         player.resetAll();
         enemyManager.resetAllEnemies();
+        objectManager.resetAllObjects();
     }
 
-    public void checkedEnemyHit(Rectangle2D.Float attackBox) {
+    public void checkIfEnemyGotHit(Rectangle2D.Float attackBox) {
         enemyManager.checkIfEnemyGotHit(attackBox);
     }
 
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public void setLevelCompleted(boolean levelCompleted) {
+        this.lvlCompleted = levelCompleted;
+    }
+
+    public ObjectManager getObjectManager() {
+        return objectManager;
+    }
+
+    public void checkIfPotionIsTouched(Rectangle2D.Float hitbox) {
+        objectManager.checkIfObjectGotTouched(hitbox);
+    }
+
+    public void checkIfObjectGotHit(Rectangle2D.Float attackBox) {
+        objectManager.checkIfObjectGotHit(attackBox);
     }
 
     @Override
@@ -282,11 +299,4 @@ public class Playing extends State implements StateMethods{
         }
     }
 
-    public void setLevelCompleted(boolean levelCompleted) {
-        this.lvlCompleted = levelCompleted;
-    }
-
-    public ObjectManager getObjectManager() {
-        return objectManager;
-    }
 }

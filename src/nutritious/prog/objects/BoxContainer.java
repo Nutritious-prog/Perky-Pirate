@@ -21,6 +21,12 @@ public class BoxContainer extends GameObject{
             xDrawOffset = (int)(8 * Game.SCALE);
             yDrawOffset = (int)(5 * Game.SCALE);
         }
+
+        //this line moves the barrels to the floor
+        //and this 2 is here because it evens the difference between hit box and actual tile size
+        //the sprite is 30 pixels high and the tile is 32 pixels
+        hitbox.y += yDrawOffset + (int)(Game.SCALE * 2);
+        hitbox.x += xDrawOffset / 2;
     }
 
     public void update() {
