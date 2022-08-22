@@ -53,7 +53,7 @@ public class ObjectManager {
                     //if container gets destroyed it drops one potion
                     if (bc.getObjectType() == BARREL)
                         type = 1;
-                    potions.add(new Potion((int) (bc.getHitbox().x + bc.getHitbox().width / 3), (int) (bc.getHitbox().y - bc.getHitbox().height / 8), type));
+                    potions.add(new Potion((int) (bc.getHitbox().x + bc.getHitbox().width / 3), (int) (bc.getHitbox().y - bc.getHitbox().height / 2), type));
                     return;
                 }
             }
