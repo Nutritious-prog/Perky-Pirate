@@ -5,8 +5,8 @@ import nutritious.prog.main.Game;
 import static nutritious.prog.utils.Constants.ObjectConstants.BOX;
 
 //boxes and barrels
-public class Container extends GameObject{
-    public Container(int x, int y, int objectType) {
+public class BoxContainer extends GameObject{
+    public BoxContainer(int x, int y, int objectType) {
         super(x, y, objectType);
         createHitbox();
     }

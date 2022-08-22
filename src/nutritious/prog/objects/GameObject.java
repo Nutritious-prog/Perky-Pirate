@@ -92,5 +92,4 @@ public class GameObject {
     public int getAnimationIndex() {
         return animationIndex;
     }
-
 }

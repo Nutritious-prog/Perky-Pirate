@@ -7,6 +7,7 @@ import nutritious.prog.entities.EnemyManager;
 import nutritious.prog.entities.Player;
 import nutritious.prog.levels.LevelManager;
 import nutritious.prog.main.Game;
+import nutritious.prog.objects.ObjectManager;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
@@ -20,11 +21,17 @@ import static nutritious.prog.utils.Constants.Environment.*;
 
 public class Playing extends State implements StateMethods{
     private Player player;
+
+    //managers
     private LevelManager levelManager;
     private EnemyManager enemyManager;
+    private ObjectManager objectManager;
+
+    //overlays
     private PauseOverlay pauseOverlay;
     private GameOverOverlay gameOverOverlay;
     private LevelCompletedOverlay levelCompletedOverlay;
+
     private boolean isPaused = false;
 
     //offset used to manipulate position of everything
@@ -80,6 +87,7 @@ public class Playing extends State implements StateMethods{
     private void initClasses() {
         levelManager = new LevelManager(game);
         enemyManager = new EnemyManager(this);
+        objectManager = new ObjectManager(this);
         player = new Player(200, 200, (int) (64 * game.SCALE), (int) (40 * game.SCALE), this);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
@@ -114,6 +122,7 @@ public class Playing extends State implements StateMethods{
             levelManager.update();
             player.update();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
+            objectManager.update();
             checkIfPlayerIsCloseToBorder();
         }
     }
@@ -144,6 +153,7 @@ public class Playing extends State implements StateMethods{
         levelManager.draw(graphics, xLvlOffset);
         player.render(graphics, xLvlOffset);
         enemyManager.draw(graphics, xLvlOffset);
+        objectManager.draw(graphics, xLvlOffset);
         if(isPaused) {
             graphics.setColor(new Color(0,0,0, 150));
             graphics.fillRect(0,0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
@@ -273,5 +283,9 @@ public class Playing extends State implements StateMethods{
 
     public void setLevelCompleted(boolean levelCompleted) {
         this.lvlCompleted = levelCompleted;
+    }
+
+    public ObjectManager getObjectManager() {
+        return objectManager;
     }
 }
