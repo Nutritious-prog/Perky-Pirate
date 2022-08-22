@@ -23,12 +23,11 @@ public class ObjectManager {
 
         potions = new ArrayList<>();
         boxContainers = new ArrayList<>();
+    }
 
-        potions.add(new Potion(300, 300, RED_POTION));
-        potions.add(new Potion(400, 300, BLUE_POTION));
-
-        boxContainers.add(new BoxContainer(500, 300, BARREL));
-        boxContainers.add(new BoxContainer(600, 300, BOX));
+    public void loadObjects(Level newLevel) {
+        potions = newLevel.getPotions();
+        boxContainers = newLevel.getBoxContainers();
     }
 
     private void loadImages() {
@@ -99,4 +98,5 @@ public class ObjectManager {
         for (BoxContainer gc : boxContainers)
             gc.reset();
     }
+
 }

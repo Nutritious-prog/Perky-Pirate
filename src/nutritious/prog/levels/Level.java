@@ -2,6 +2,9 @@ package nutritious.prog.levels;
 
 import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
+import nutritious.prog.objects.BoxContainer;
+import nutritious.prog.objects.Potion;
+import nutritious.prog.utils.HelperMethods;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
@@ -16,6 +19,8 @@ public class Level {
     private BufferedImage levelImg;
     private int[][] lvlData;
     private ArrayList<Crabby> crabs;
+    private ArrayList<Potion> potions;
+    private ArrayList<BoxContainer> boxContainers;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffsetX;
@@ -25,8 +30,18 @@ public class Level {
         this.levelImg = levelImg;
         createLevelData();
         createEnemies();
+        createPotions();
+        createBoxContainers();
         calcLvlOffsets();
         calcPlayerSpawn();
+    }
+
+    private void createBoxContainers() {
+        boxContainers = HelperMethods.GetContainers(levelImg);
+    }
+
+    private void createPotions() {
+        potions = HelperMethods.GetPotions(levelImg);
     }
 
     private void calcPlayerSpawn() {
@@ -71,5 +86,13 @@ public class Level {
 
     public Point getPlayerSpawn() {
         return playerSpawn;
+    }
+
+    public ArrayList<Potion> getPotions() {
+        return potions;
+    }
+
+    public ArrayList<BoxContainer> getBoxContainers() {
+        return boxContainers;
     }
 }
