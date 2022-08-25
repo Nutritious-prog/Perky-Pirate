@@ -33,6 +33,8 @@ public class GameObject {
             if(objectType == BARREL || objectType == BOX) {
                 playAnimation = false;
                 active = false;
+            } else if(objectType == CANNON_LEFT || objectType == CANNON_RIGHT) {
+                playAnimation = false;
             }
         }
     }
