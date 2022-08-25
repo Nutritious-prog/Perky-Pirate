@@ -3,6 +3,7 @@ package nutritious.prog.utils;
 import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
 import nutritious.prog.objects.BoxContainer;
+import nutritious.prog.objects.Cannon;
 import nutritious.prog.objects.Potion;
 import nutritious.prog.objects.Spikes;
 
@@ -210,6 +211,20 @@ public class HelperMethods {
                 int value = color.getBlue();
                 if (value == SPIKE)
                     list.add(new Spikes(i * Game.TILES_SIZE, j * Game.TILES_SIZE, SPIKE));
+            }
+
+        return list;
+    }
+
+    public static ArrayList<Cannon> GetCannons(BufferedImage img) {
+        ArrayList<Cannon> list = new ArrayList<>();
+
+        for (int j = 0; j < img.getHeight(); j++)
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getBlue();
+                if (value == CANNON_LEFT || value == CANNON_RIGHT)
+                    list.add(new Cannon(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
             }
 
         return list;

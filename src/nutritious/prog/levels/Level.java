@@ -3,6 +3,7 @@ package nutritious.prog.levels;
 import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
 import nutritious.prog.objects.BoxContainer;
+import nutritious.prog.objects.Cannon;
 import nutritious.prog.objects.Potion;
 import nutritious.prog.objects.Spikes;
 import nutritious.prog.utils.HelperMethods;
@@ -23,6 +24,7 @@ public class Level {
     private ArrayList<Potion> potions;
     private ArrayList<BoxContainer> boxContainers;
     private ArrayList<Spikes> spikes;
+    private ArrayList<Cannon> cannons;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffsetX;
@@ -35,8 +37,13 @@ public class Level {
         createPotions();
         createBoxContainers();
         createSpikes();
+        createCannons();
         calcLvlOffsets();
         calcPlayerSpawn();
+    }
+
+    private void createCannons() {
+        cannons = HelperMethods.GetCannons(levelImg);
     }
 
     private void createSpikes() {
@@ -105,5 +112,9 @@ public class Level {
 
     public ArrayList<Spikes> getSpikes() {
         return spikes;
+    }
+
+    public ArrayList<Cannon> getCannons() {
+        return cannons;
     }
 }

@@ -15,10 +15,12 @@ import static nutritious.prog.utils.Constants.ObjectConstants.*;
 public class ObjectManager {
     private Playing playing;
     private BufferedImage[][] potionImages, containerImages;
+    private BufferedImage[] cannonImages;
     private BufferedImage spikesImage;
     private ArrayList<Potion> potions;
     private ArrayList<BoxContainer> boxContainers;
     private ArrayList<Spikes> spikes;
+    private ArrayList<Cannon> cannons;
 
     public ObjectManager(Playing playing) {
         this.playing = playing;
@@ -78,6 +80,7 @@ public class ObjectManager {
         boxContainers = new ArrayList<>(newLevel.getBoxContainers());
         //spikes are static, so we don't need the functionality like above
         spikes = newLevel.getSpikes();
+        cannons = newLevel.getCannons();
     }
 
     private void loadImages() {
@@ -96,6 +99,12 @@ public class ObjectManager {
                 containerImages[j][i] = containerSprite.getSubimage(40 * i, 30 * j, 40, 30);
 
         spikesImage = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
+
+        cannonImages = new BufferedImage[7];
+        BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.CANNON_ATLAS);
+        for(int i = 0; i < cannonImages.length; i++) {
+            cannonImages[i] = temp.getSubimage(i * 40, 0,40, 26);
+        }
     }
 
     public void update() {
@@ -106,12 +115,34 @@ public class ObjectManager {
         for (BoxContainer bc : boxContainers)
             if (bc.isActive())
                 bc.update();
+
+        updateCannons();
+    }
+
+    private void updateCannons() {
+        for(Cannon c : cannons) {
+            c.update();
+        }
     }
 
     public void draw(Graphics g, int xLvlOffset) {
         drawPotions(g, xLvlOffset);
         drawContainers(g, xLvlOffset);
         drawSpikes(g, xLvlOffset);
+        drawCannons(g, xLvlOffset);
+    }
+
+    private void drawCannons(Graphics g, int xLvlOffset) {
+        for(Cannon c : cannons) {
+            int x = (int)(c.getHitbox().x - xLvlOffset);
+            int width = CANNON_WIDTH;
+            //we mirror the image if it is facing to the other side
+            if(c.getObjectType() == CANNON_RIGHT) {
+                x += width;
+                width *= -1;
+            }
+            g.drawImage(cannonImages[c.getAnimationIndex()], x, (int) (c.getHitbox().y), width, CANNON_HEIGHT, null);
+        }
     }
 
     private void drawSpikes(Graphics g, int xLvlOffset) {
@@ -158,6 +189,9 @@ public class ObjectManager {
 
         for (BoxContainer gc : boxContainers)
             gc.reset();
+
+        for (Cannon c : cannons)
+            c.reset();
     }
 
 }

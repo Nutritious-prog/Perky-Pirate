@@ -44,7 +44,7 @@ public class GameObject {
         animationTick = 0;
         active = true;
 
-        if(objectType == BARREL || objectType == BOX) {
+        if(objectType == BARREL || objectType == BOX || objectType == CANNON_LEFT || objectType == CANNON_RIGHT) {
             playAnimation = false;
         } else {
             playAnimation = true;
