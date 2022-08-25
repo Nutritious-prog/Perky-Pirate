@@ -214,6 +214,14 @@ public class Playing extends State implements StateMethods{
         objectManager.checkIfObjectGotHit(attackBox);
     }
 
+    public void checkIfSpikesGotTouched(Player player) {
+        objectManager.checkIfSpikesGotTouched(player);
+    }
+
+    public LevelManager getLevelManager() {
+        return levelManager;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if(!gameOver) {

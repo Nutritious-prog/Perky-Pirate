@@ -18,10 +18,10 @@ public class Potion extends GameObject{
 
     public void update() {
         updateAnimationTick();
-        updateidleAnimtion();
+        updateIdleAnimation();
     }
 
-    private void updateidleAnimtion() {
+    private void updateIdleAnimation() {
         idleAnimtionOffset += (0.075f * Game.SCALE * idleAnimtionDir);
 
         if (idleAnimtionOffset >= maxidleAnimtionOffset)

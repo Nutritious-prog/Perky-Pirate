@@ -80,6 +80,7 @@ public class Player extends Entity {
 
         if(isMoving) {
             checkIfPotionIsTouched();
+            checkIfSpikesGotTouched();
         }
         if(isAttacking) {
             checkAttack();
@@ -87,6 +88,10 @@ public class Player extends Entity {
 
         updateAnimationTick();
         setAnimation();
+    }
+
+    private void checkIfSpikesGotTouched() {
+        playing.checkIfSpikesGotTouched(this);
     }
 
     private void checkIfPotionIsTouched() {
@@ -311,6 +316,10 @@ public class Player extends Entity {
         } else if (currentHealth >= maxHealth) {
             currentHealth = maxHealth;
         }
+    }
+    //this method will be used to just kill the player regardless of how many hp he has
+    public void kill() {
+        currentHealth = 0;
     }
 
     public void resetAll() {

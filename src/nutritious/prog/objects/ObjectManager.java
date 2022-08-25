@@ -1,5 +1,6 @@
 package nutritious.prog.objects;
 
+import nutritious.prog.entities.Player;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.levels.Level;
 import nutritious.prog.utils.LoadSave;
@@ -14,8 +15,10 @@ import static nutritious.prog.utils.Constants.ObjectConstants.*;
 public class ObjectManager {
     private Playing playing;
     private BufferedImage[][] potionImages, containerImages;
+    private BufferedImage spikesImage;
     private ArrayList<Potion> potions;
     private ArrayList<BoxContainer> boxContainers;
+    private ArrayList<Spikes> spikes;
 
     public ObjectManager(Playing playing) {
         this.playing = playing;
@@ -23,6 +26,14 @@ public class ObjectManager {
 
         potions = new ArrayList<>();
         boxContainers = new ArrayList<>();
+    }
+
+    public void checkIfSpikesGotTouched(Player player) {
+        for (Spikes s : spikes) {
+            if(s.getHitbox().intersects(player.getHitbox())) {
+                player.kill();
+            }
+        }
     }
 
     //this method will check if player touched the potions (if so, we change certain values - applyEffectToPlayer() method)
@@ -45,7 +56,9 @@ public class ObjectManager {
 
     public void checkIfObjectGotHit(Rectangle2D.Float attackbox) {
         for (BoxContainer bc : boxContainers)
-            if (bc.isActive()) {
+            //the !playAnimation is needed to prevent player from spamming attack while the barrel is playing destroy animation
+            //and therefore spawn many potions. We want one potion from one box
+            if (bc.isActive() && !bc.playAnimation) {
                 if (bc.getHitbox().intersects(attackbox)) {
                     //we animate containers only when they get destroyed
                     bc.setAnimation(true);
@@ -60,8 +73,11 @@ public class ObjectManager {
     }
 
     public void loadObjects(Level newLevel) {
-        potions = newLevel.getPotions();
-        boxContainers = newLevel.getBoxContainers();
+        //reset potions and boxes after every level reload instead of infinitely populating the arraylist
+        potions = new ArrayList<>(newLevel.getPotions());
+        boxContainers = new ArrayList<>(newLevel.getBoxContainers());
+        //spikes are static, so we don't need the functionality like above
+        spikes = newLevel.getSpikes();
     }
 
     private void loadImages() {
@@ -78,6 +94,8 @@ public class ObjectManager {
         for (int j = 0; j < containerImages.length; j++)
             for (int i = 0; i < containerImages[j].length; i++)
                 containerImages[j][i] = containerSprite.getSubimage(40 * i, 30 * j, 40, 30);
+
+        spikesImage = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
     }
 
     public void update() {
@@ -93,6 +111,13 @@ public class ObjectManager {
     public void draw(Graphics g, int xLvlOffset) {
         drawPotions(g, xLvlOffset);
         drawContainers(g, xLvlOffset);
+        drawSpikes(g, xLvlOffset);
+    }
+
+    private void drawSpikes(Graphics g, int xLvlOffset) {
+        for(Spikes s : spikes) {
+            g.drawImage(spikesImage, (int)(s.getHitbox().x - xLvlOffset), (int)(s.getHitbox().y - s.getYDrawOffset()), SPIKE_WIDTH, SPIKE_HEIGHT, null);
+        }
     }
 
     private void drawContainers(Graphics g, int xLvlOffset) {
@@ -126,6 +151,8 @@ public class ObjectManager {
     }
 
     public void resetAllObjects() {
+        loadObjects(playing.getLevelManager().getCurrentLevel());
+
         for (Potion p : potions)
             p.reset();
 

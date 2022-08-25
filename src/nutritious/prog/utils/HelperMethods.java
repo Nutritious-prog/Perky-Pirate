@@ -4,6 +4,7 @@ import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
 import nutritious.prog.objects.BoxContainer;
 import nutritious.prog.objects.Potion;
+import nutritious.prog.objects.Spikes;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -196,6 +197,19 @@ public class HelperMethods {
                 int value = color.getBlue();
                 if (value == BOX || value == BARREL)
                     list.add(new BoxContainer(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
+            }
+
+        return list;
+    }
+
+    public static ArrayList<Spikes> GetSpikes(BufferedImage img) {
+        ArrayList<Spikes> list = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++)
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getBlue();
+                if (value == SPIKE)
+                    list.add(new Spikes(i * Game.TILES_SIZE, j * Game.TILES_SIZE, SPIKE));
             }
 
         return list;
