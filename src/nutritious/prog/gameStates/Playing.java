@@ -123,7 +123,7 @@ public class Playing extends State implements StateMethods{
             levelManager.update();
             player.update();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
-            objectManager.update();
+            objectManager.update(levelManager.getCurrentLevel().getLevelData(), player);
             checkIfPlayerIsCloseToBorder();
         }
     }

@@ -103,16 +103,13 @@ public class HelperMethods {
      * method checks if there are no obstacles along the way and if an entity can seamlessly walk the distance
      */
     public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] levelData) {
-        //we just check if all tiles between points are not solid
-        for (int i = 0; i < xEnd - xStart; i++) {
-            //checking tiles in line of points
-            if (IsTileSolid(xStart + i, y, levelData))
-                return false;
-            //checking tiles below line of points (to prevent entities from falling into holes)
-            if (!IsTileSolid(xStart + i, y + 1, levelData))
-                return false;
-        }
-
+        if (IsAllTilesClear(xStart, xEnd, y, levelData))
+            //we just check if all tiles between points are not solid
+            for (int i = 0; i < xEnd - xStart; i++) {
+                //checking tiles below line of points (to prevent entities from falling into holes)
+                if (!IsTileSolid(xStart + i, y + 1, levelData))
+                    return false;
+            }
         return true;
     }
 
@@ -125,6 +122,23 @@ public class HelperMethods {
             return IsAllTilesWalkable(secondXTile, firstXTile, yTile, levelData);
         else
             return IsAllTilesWalkable(firstXTile, secondXTile, yTile, levelData);
+    }
+
+    public static boolean CanCannonSeePlayer(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
+        int firstXTile = (int) (firstHitbox.x / Game.TILES_SIZE);
+        int secondXTile = (int) (secondHitbox.x / Game.TILES_SIZE);
+
+        if (firstXTile > secondXTile)
+            return IsAllTilesClear(secondXTile, firstXTile, yTile, lvlData);
+        else
+            return IsAllTilesClear(firstXTile, secondXTile, yTile, lvlData);
+    }
+
+    public static boolean IsAllTilesClear(int xStart, int xEnd, int y, int[][] lvlData) {
+        for (int i = 0; i < xEnd - xStart; i++)
+            if (IsTileSolid(xStart + i, y, lvlData))
+                return false;
+        return true;
     }
 
     //displaying level as a two-dimensional array

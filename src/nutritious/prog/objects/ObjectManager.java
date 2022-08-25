@@ -3,6 +3,7 @@ package nutritious.prog.objects;
 import nutritious.prog.entities.Player;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.levels.Level;
+import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
 
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static nutritious.prog.utils.Constants.ObjectConstants.*;
+import static nutritious.prog.utils.HelperMethods.CanCannonSeePlayer;
 
 public class ObjectManager {
     private Playing playing;
@@ -107,7 +109,7 @@ public class ObjectManager {
         }
     }
 
-    public void update() {
+    public void update(int[][] lvlData, Player player) {
         for (Potion p : potions)
             if (p.isActive())
                 p.update();
@@ -116,13 +118,39 @@ public class ObjectManager {
             if (bc.isActive())
                 bc.update();
 
-        updateCannons();
+        updateCannons(lvlData, player);
     }
 
-    private void updateCannons() {
-        for(Cannon c : cannons) {
+    private boolean isPlayerInRange(Cannon c, Player player) {
+        int distanceBetweenPlayerAndCannon = (int) Math.abs(player.getHitbox().x - c.getHitbox().x);
+        return distanceBetweenPlayerAndCannon <= Game.TILES_SIZE * 5;
+    }
+
+    private boolean isPlayerInFrontOfCannon(Cannon c, Player player) {
+        if (c.getObjectType() == CANNON_LEFT) {
+            if (c.getHitbox().x > player.getHitbox().x)
+                return true;
+        } else if (c.getHitbox().x < player.getHitbox().x)
+            return true;
+        return false;
+    }
+
+    private void updateCannons(int[][] lvlData, Player player) {
+        for (Cannon c : cannons) {
+            if (!c.playAnimation)
+                if (c.getTileY() == player.getTileY())
+                    if (isPlayerInRange(c, player))
+                        if (isPlayerInFrontOfCannon(c, player))
+                            if (CanCannonSeePlayer(lvlData, player.getHitbox(), c.getHitbox(), c.getTileY())) {
+                                shootCannon(c);
+                            }
+
             c.update();
         }
+    }
+
+    private void shootCannon(Cannon c) {
+        c.setAnimation(true);
     }
 
     public void draw(Graphics g, int xLvlOffset) {
