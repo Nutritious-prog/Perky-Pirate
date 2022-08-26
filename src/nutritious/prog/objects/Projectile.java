@@ -1,5 +1,7 @@
 package nutritious.prog.objects;
 
+import nutritious.prog.main.Game;
+
 import java.awt.geom.Rectangle2D;
 
 import static nutritious.prog.utils.Constants.Projectiles.*;
@@ -10,7 +12,14 @@ public class Projectile {
     private boolean active = true;
 
     public Projectile(int x, int y, int direction) {
-        hitbox = new Rectangle2D.Float(x, y, CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT);
+        //projectile spawn position fix (to spawn in the cannon not on top of it)
+        int xOffset = (int) (-3 * Game.SCALE);
+        int yOffset = (int) (5 * Game.SCALE);
+
+        if (direction == 1)
+            xOffset = (int) (29 * Game.SCALE);
+
+        hitbox = new Rectangle2D.Float(x + xOffset, y + yOffset, CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT);
         this.direction = direction;
     }
 

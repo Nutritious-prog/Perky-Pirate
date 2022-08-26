@@ -161,15 +161,18 @@ public class ObjectManager {
                     if (isPlayerInRange(c, player))
                         if (isPlayerInFrontOfCannon(c, player))
                             if (CanCannonSeePlayer(lvlData, player.getHitbox(), c.getHitbox(), c.getTileY())) {
-                                shootCannon(c);
+                                c.setAnimation(true);
                             }
-
             c.update();
+            //cannonball should be shot at certain animation frame
+            //animation tick condition is needed for cannon to shoot only once (one animation takes some time and cannon will shoot huge amount of balls during this time)
+            if(c.getAnimationIndex() == 4 && c.getAnimationTick() == 0) {
+                shootCannon(c);
+            }
         }
     }
 
     private void shootCannon(Cannon c) {
-        c.setAnimation(true);
         //depending on cannons direction the projectile will go certain way
         int direction = c.getObjectType() == CANNON_LEFT ? -1 : 1;
         projectiles.add(new Projectile((int)(c.getHitbox().x), (int)(c.getHitbox().y),direction ));
