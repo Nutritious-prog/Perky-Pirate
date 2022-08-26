@@ -12,17 +12,19 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static nutritious.prog.utils.Constants.ObjectConstants.*;
+import static nutritious.prog.utils.Constants.Projectiles.*;
 import static nutritious.prog.utils.HelperMethods.CanCannonSeePlayer;
 
 public class ObjectManager {
     private Playing playing;
     private BufferedImage[][] potionImages, containerImages;
     private BufferedImage[] cannonImages;
-    private BufferedImage spikesImage;
+    private BufferedImage spikesImage, cannonBallImg;
     private ArrayList<Potion> potions;
     private ArrayList<BoxContainer> boxContainers;
     private ArrayList<Spikes> spikes;
     private ArrayList<Cannon> cannons;
+    private ArrayList<Projectile> projectiles = new ArrayList<>();              //the level doesn't determine how many projectiles we have, so we can initialise it like that
 
     public ObjectManager(Playing playing) {
         this.playing = playing;
@@ -83,9 +85,11 @@ public class ObjectManager {
         //spikes are static, so we don't need the functionality like above
         spikes = newLevel.getSpikes();
         cannons = newLevel.getCannons();
+        projectiles.clear();
     }
 
     private void loadImages() {
+        //POTIONS
         BufferedImage potionSprite = LoadSave.GetSpriteAtlas(LoadSave.POTIONS_ATLAS);
         potionImages = new BufferedImage[2][7];
 
@@ -93,6 +97,7 @@ public class ObjectManager {
             for (int i = 0; i < potionImages[j].length; i++)
                 potionImages[j][i] = potionSprite.getSubimage(12 * i, 16 * j, 12, 16);
 
+        //BOXES
         BufferedImage containerSprite = LoadSave.GetSpriteAtlas(LoadSave.DESTROYABLE_OBJECTS_ATLAS);
         containerImages = new BufferedImage[2][8];
 
@@ -100,13 +105,18 @@ public class ObjectManager {
             for (int i = 0; i < containerImages[j].length; i++)
                 containerImages[j][i] = containerSprite.getSubimage(40 * i, 30 * j, 40, 30);
 
+        //SPIKES
         spikesImage = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
 
+        //CANNONS
         cannonImages = new BufferedImage[7];
         BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.CANNON_ATLAS);
         for(int i = 0; i < cannonImages.length; i++) {
             cannonImages[i] = temp.getSubimage(i * 40, 0,40, 26);
         }
+
+        //CANNON BALLS
+        cannonBallImg = LoadSave.GetSpriteAtlas(LoadSave.CANNON_BALL);
     }
 
     public void update(int[][] lvlData, Player player) {
@@ -119,6 +129,15 @@ public class ObjectManager {
                 bc.update();
 
         updateCannons(lvlData, player);
+        updateProjectiles(lvlData, player);
+    }
+
+    private void updateProjectiles(int[][] lvlData, Player player) {
+        for(Projectile p : projectiles) {
+            if(p.isActive()) {
+                p.updatePos();
+            }
+        }
     }
 
     private boolean isPlayerInRange(Cannon c, Player player) {
@@ -151,6 +170,9 @@ public class ObjectManager {
 
     private void shootCannon(Cannon c) {
         c.setAnimation(true);
+        //depending on cannons direction the projectile will go certain way
+        int direction = c.getObjectType() == CANNON_LEFT ? -1 : 1;
+        projectiles.add(new Projectile((int)(c.getHitbox().x), (int)(c.getHitbox().y),direction ));
     }
 
     public void draw(Graphics g, int xLvlOffset) {
@@ -158,6 +180,13 @@ public class ObjectManager {
         drawContainers(g, xLvlOffset);
         drawSpikes(g, xLvlOffset);
         drawCannons(g, xLvlOffset);
+        drawProjectiles(g, xLvlOffset);
+    }
+
+    private void drawProjectiles(Graphics g, int xLvlOffset) {
+        for (Projectile p : projectiles)
+            if (p.isActive())
+                g.drawImage(cannonBallImg, (int) (p.getHitbox().x - xLvlOffset), (int) (p.getHitbox().y), CANNON_BALL_WIDTH, CANNON_BALL_HEIGHT, null);
     }
 
     private void drawCannons(Graphics g, int xLvlOffset) {
