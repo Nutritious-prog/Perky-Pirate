@@ -30,4 +30,7 @@ public class GameOverOverlay {
             GameState.state = GameState.MENU;
         }
     }
+
+    public void update() {
+    }
 }

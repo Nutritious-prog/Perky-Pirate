@@ -72,25 +72,42 @@ public class Player extends Entity {
     public void update() {
         updateHealthBar();
 
-        if(currentHealth <= 0) {
-            playing.setGameOver(true);
+        if (currentHealth <= 0) {
+            //we check here if player just got killed, and we proceed to play death animation
+            if (state != DEAD) {
+                state = DEAD;
+                animationTick = 0;
+                animationIndex = 0;
+                playing.setPlayerDying(true);
+            } else if (animationIndex == GetSpriteAmount(DEAD) - 1 && animationTick >= ANI_TIME - 1) {     //here we check if animation was fully played
+                playing.setGameOver(true);                                                                  //(the last animation frame and last animation tick) and if we can end the game
+            } else {
+                updateAnimationTick();                                                                      //or else we just play the dying animation
+                disableWalking();
+                updatePosition();
+            }
+
             return;
         }
 
         updateAttackBox();
-        updatePosition();
 
-        if(isMoving) {
+        updatePosition();
+        if (isMoving) {
             checkIfPotionIsTouched();
             checkIfSpikesGotTouched();
-            tileY = (int)(hitbox.y / Game.TILES_SIZE);
+            tileY = (int) (hitbox.y / Game.TILES_SIZE);
         }
-        if(isAttacking) {
+        if (isAttacking)
             checkAttack();
-        }
 
         updateAnimationTick();
         setAnimation();
+    }
+
+    private void disableWalking() {
+        left = right;
+        right = left;
     }
 
     private void checkIfSpikesGotTouched() {
@@ -272,7 +289,7 @@ public class Player extends Entity {
                 hitbox.y += airSpeed;
                 airSpeed += GRAVITY;
                 updateXPos(xSpeed);
-            } else {                  // if not we met an obstacle
+            } else {                  // if not, we met an obstacle
                 hitbox.y = GetEntityYPosUnderRoofOrAboveTheFloor(hitbox, airSpeed);     //we hit floor or the roof
                 if(airSpeed > 0) {          //we hit the floor
                     resetInAir();
