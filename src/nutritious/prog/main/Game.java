@@ -1,6 +1,7 @@
 package nutritious.prog.main;
 
 import nutritious.prog.UI.AudioOptions;
+import nutritious.prog.gameStates.GameOptions;
 import nutritious.prog.gameStates.GameState;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.gameStates.Menu;
@@ -16,6 +17,7 @@ public class Game implements Runnable {
 
     private Playing playing;
     private Menu menu;
+    private GameOptions gameOptions;
     private AudioOptions audioOptions;
 
     private final int FPS_SET = 120;
@@ -42,7 +44,8 @@ public class Game implements Runnable {
     }
 
     private void initClasses() {
-        audioOptions=new AudioOptions();
+        audioOptions = new AudioOptions();
+        gameOptions = new GameOptions(this);
         menu = new Menu(this);
         playing = new Playing(this);
     }
@@ -61,8 +64,10 @@ public class Game implements Runnable {
             case PLAYING:
                 playing.update();
                 break;
-            case QUIT:
             case OPTIONS:
+                gameOptions.update();
+                break;
+            case QUIT:
             default:
                 System.exit(0);
                 break;
@@ -76,6 +81,9 @@ public class Game implements Runnable {
                 break;
             case PLAYING:
                 playing.draw(graphics);
+                break;
+            case OPTIONS:
+                gameOptions.draw(graphics);
                 break;
             default:
                 break;
@@ -134,10 +142,16 @@ public class Game implements Runnable {
     public Menu getMenu() {
         return menu;
     }
+
     public Playing getPlaying() {
         return playing;
     }
+
     public AudioOptions getAudioOptions() {
         return audioOptions;
+    }
+
+    public GameOptions getGameOptions() {
+        return gameOptions;
     }
 }
