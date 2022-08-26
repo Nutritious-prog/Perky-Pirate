@@ -1,5 +1,6 @@
 package nutritious.prog.main;
 
+import nutritious.prog.UI.AudioOptions;
 import nutritious.prog.gameStates.GameState;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.gameStates.Menu;
@@ -15,6 +16,7 @@ public class Game implements Runnable {
 
     private Playing playing;
     private Menu menu;
+    private AudioOptions audioOptions;
 
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
@@ -40,6 +42,7 @@ public class Game implements Runnable {
     }
 
     private void initClasses() {
+        audioOptions=new AudioOptions();
         menu = new Menu(this);
         playing = new Playing(this);
     }
@@ -133,5 +136,8 @@ public class Game implements Runnable {
     }
     public Playing getPlaying() {
         return playing;
+    }
+    public AudioOptions getAudioOptions() {
+        return audioOptions;
     }
 }
