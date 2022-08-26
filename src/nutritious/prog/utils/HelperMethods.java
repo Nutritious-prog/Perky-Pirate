@@ -2,10 +2,7 @@ package nutritious.prog.utils;
 
 import nutritious.prog.entities.Crabby;
 import nutritious.prog.main.Game;
-import nutritious.prog.objects.BoxContainer;
-import nutritious.prog.objects.Cannon;
-import nutritious.prog.objects.Potion;
-import nutritious.prog.objects.Spikes;
+import nutritious.prog.objects.*;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -37,6 +34,10 @@ public class HelperMethods {
         float yIndex = y / Game.TILES_SIZE;
 
         return IsTileSolid((int) xIndex, (int) yIndex, levelData);
+    }
+
+    public static boolean IsProjectileHittingLevel(Projectile p, int[][] lvlData) {
+        return IsSolid(p.getHitbox().x + p.getHitbox().width / 2, p.getHitbox().y + p.getHitbox().height / 2, lvlData);
     }
 
     public static boolean IsTileSolid(int xTile, int yTile, int[][] levelData) {

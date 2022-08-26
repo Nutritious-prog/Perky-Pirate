@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import static nutritious.prog.utils.Constants.ObjectConstants.*;
 import static nutritious.prog.utils.Constants.Projectiles.*;
 import static nutritious.prog.utils.HelperMethods.CanCannonSeePlayer;
+import static nutritious.prog.utils.HelperMethods.IsProjectileHittingLevel;
 
 public class ObjectManager {
     private Playing playing;
@@ -133,11 +134,15 @@ public class ObjectManager {
     }
 
     private void updateProjectiles(int[][] lvlData, Player player) {
-        for(Projectile p : projectiles) {
-            if(p.isActive()) {
+        for (Projectile p : projectiles)
+            if (p.isActive()) {
                 p.updatePos();
+                if (p.getHitbox().intersects(player.getHitbox())) {
+                    player.changeHealth(-CANNON_BALL_DMG);
+                    p.setActive(false);
+                } else if (IsProjectileHittingLevel(p, lvlData))
+                    p.setActive(false);
             }
-        }
     }
 
     private boolean isPlayerInRange(Cannon c, Player player) {
