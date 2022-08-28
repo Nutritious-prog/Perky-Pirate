@@ -1,6 +1,7 @@
 package nutritious.prog.main;
 
 import nutritious.prog.UI.AudioOptions;
+import nutritious.prog.audio.AudioPlayer;
 import nutritious.prog.gameStates.GameOptions;
 import nutritious.prog.gameStates.GameState;
 import nutritious.prog.gameStates.Playing;
@@ -19,12 +20,13 @@ public class Game implements Runnable {
     private Menu menu;
     private GameOptions gameOptions;
     private AudioOptions audioOptions;
+    private AudioPlayer audioPlayer;
 
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
 
     public final static int TILES_DEFAULT_SIZE = 32;
-    public final static float SCALE = 1.5f;
+    public final static float SCALE = 2.3f;
     public final static int TILES_IN_WIDTH = 26;    // these two values is the visible with and height
     public final static int TILES_IN_HEIGHT = 14;
     public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
@@ -40,11 +42,11 @@ public class Game implements Runnable {
         gamePanel.requestFocus();
 
         startGameLoop();
-
     }
 
     private void initClasses() {
         audioOptions = new AudioOptions();
+        audioPlayer = new AudioPlayer();
         gameOptions = new GameOptions(this);
         menu = new Menu(this);
         playing = new Playing(this);
@@ -153,5 +155,9 @@ public class Game implements Runnable {
 
     public GameOptions getGameOptions() {
         return gameOptions;
+    }
+
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
     }
 }

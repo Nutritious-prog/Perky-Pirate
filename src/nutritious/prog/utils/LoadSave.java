@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
 
 public class LoadSave {
+    public static final String GAME_ICON = "pirate_icon.png";
     public static final String PLAYER_ATLAS = "player_sprites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
     public static final String MENU_BUTTONS = "button_atlas.png";

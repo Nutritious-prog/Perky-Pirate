@@ -1,5 +1,7 @@
 package nutritious.prog.main;
 
+import nutritious.prog.utils.LoadSave;
+
 import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -7,6 +9,8 @@ import java.awt.event.WindowFocusListener;
 public class GameWindow {
     private JFrame jFrame;
     public GameWindow(GamePanel gamePanel) {
+        ImageIcon img = new ImageIcon("res\\pirate_icon.png");
+
         jFrame = new JFrame();
 
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // terminate app on close button
@@ -27,5 +31,6 @@ public class GameWindow {
         });
 
         jFrame.setVisible(true);
+        jFrame.setIconImage(img.getImage());
     }
 }
