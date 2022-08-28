@@ -3,6 +3,7 @@ package nutritious.prog.gameStates;
 import nutritious.prog.UI.GameOverOverlay;
 import nutritious.prog.UI.LevelCompletedOverlay;
 import nutritious.prog.UI.PauseOverlay;
+import nutritious.prog.audio.AudioPlayer;
 import nutritious.prog.entities.EnemyManager;
 import nutritious.prog.entities.Player;
 import nutritious.prog.levels.LevelManager;
@@ -206,6 +207,9 @@ public class Playing extends State implements StateMethods{
 
     public void setLevelCompleted(boolean levelCompleted) {
         this.lvlCompleted = levelCompleted;
+        if(levelCompleted) {
+            game.getAudioPlayer().playEffect(AudioPlayer.LVL_COMPLETED);
+        }
     }
 
     public ObjectManager getObjectManager() {

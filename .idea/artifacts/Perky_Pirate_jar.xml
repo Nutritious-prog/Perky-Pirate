@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Perky-Pirate:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Perky_Pirate_jar</output-path>
+    <root id="archive" name="Perky-Pirate.jar">
+      <element id="module-output" name="Perky-Pirate" />
+    </root>
+  </artifact>
+</component>

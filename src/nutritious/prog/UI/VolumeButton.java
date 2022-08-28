@@ -14,6 +14,8 @@ public class VolumeButton extends PauseButton{
     private boolean mouseOver, mousePressed;
     private int buttonX; // used for positioning button on slider
     private int minimalX, maximalX; // boundaries where the button can go on slider
+    private float sliderPosOnTheBar = 0f; //value representing how much % of volume is currently set on a slider
+
 
     public VolumeButton(int x, int y, int width, int height) {
         super(x + width / 2, y, VOLUME_WIDTH, height);
@@ -60,7 +62,14 @@ public class VolumeButton extends PauseButton{
             buttonX = x;
         }
 
+        updateSliderPosOnTheBar();
         bounds.x = buttonX - VOLUME_WIDTH / 2;
+    }
+
+    private void updateSliderPosOnTheBar() {
+        float range = maximalX - minimalX;
+        float value = buttonX - minimalX;
+        sliderPosOnTheBar = value/range;
     }
 
     //for releasing mouse (reset bools to get default index (default button))
@@ -83,5 +92,9 @@ public class VolumeButton extends PauseButton{
 
     public void setMousePressed(boolean mousePressed) {
         this.mousePressed = mousePressed;
+    }
+
+    public float getSliderPosOnTheBar() {
+        return sliderPosOnTheBar;
     }
 }

@@ -13,8 +13,10 @@ import static nutritious.prog.utils.Constants.UI.VolumeButtons.VOLUME_HEIGHT;
 public class AudioOptions {
     private VolumeButton volumeButton;
     private SoundButton musicButton, sfxButton;
+    private Game game;
 
-    public AudioOptions() {
+    public AudioOptions(Game game) {
+        this.game = game;
         createSoundButtons();
         createVolumeButton();
     }
@@ -48,8 +50,13 @@ public class AudioOptions {
     }
 
     public void mouseDragged(MouseEvent e) {
-        if(volumeButton.isMousePressed()) {
+        if (volumeButton.isMousePressed()) {
+            float valueBefore = volumeButton.getSliderPosOnTheBar();
             volumeButton.changeX(e.getX());
+            float valueAfter = volumeButton.getSliderPosOnTheBar();
+            if(valueBefore != valueAfter) {
+                game.getAudioPlayer().setVolume(valueAfter);
+            }
         }
     }
     public void mouseClicked(MouseEvent e) {
@@ -70,11 +77,12 @@ public class AudioOptions {
     public void mouseReleased(MouseEvent e) {
         if(isMouseOnButton(e, musicButton)) {
             if(musicButton.isMousePressed()) {
-                // if we click the button it will toggle whatever value there was before
+                game.getAudioPlayer().toggleMusicMute();
                 musicButton.setMuted(!musicButton.isMuted());
             }
         } else if (isMouseOnButton(e, sfxButton)) {
             if(sfxButton.isMousePressed()) {
+                game.getAudioPlayer().toggleSfxMute();
                 sfxButton.setMuted(!sfxButton.isMuted());
             }
         }

@@ -1,22 +1,15 @@
 package nutritious.prog.utils;
 
-import nutritious.prog.entities.Crabby;
-import nutritious.prog.main.Game;
-
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 
-import static nutritious.prog.utils.Constants.EnemyConstants.CRABBY;
 
 public class LoadSave {
-    public static final String GAME_ICON = "pirate_icon.png";
     public static final String PLAYER_ATLAS = "player_sprites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
     public static final String MENU_BUTTONS = "button_atlas.png";

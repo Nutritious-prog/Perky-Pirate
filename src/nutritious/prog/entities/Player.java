@@ -1,5 +1,6 @@
 package nutritious.prog.entities;
 
+import nutritious.prog.audio.AudioPlayer;
 import nutritious.prog.gameStates.Playing;
 import nutritious.prog.main.Game;
 import nutritious.prog.utils.LoadSave;
@@ -79,8 +80,11 @@ public class Player extends Entity {
                 animationTick = 0;
                 animationIndex = 0;
                 playing.setPlayerDying(true);
+                playing.getGame().getAudioPlayer().playEffect(AudioPlayer.DIE);
             } else if (animationIndex == GetSpriteAmount(DEAD) - 1 && animationTick >= ANI_TIME - 1) {     //here we check if animation was fully played
                 playing.setGameOver(true);                                                                  //(the last animation frame and last animation tick) and if we can end the game
+                playing.getGame().getAudioPlayer().stopSong();
+                playing.getGame().getAudioPlayer().playEffect(AudioPlayer.GAME_OVER);
             } else {
                 updateAnimationTick();                                                                      //or else we just play the dying animation
                 disableWalking();
@@ -126,6 +130,7 @@ public class Player extends Entity {
         attackChecked = true;
         playing.checkIfEnemyGotHit(attackBox);
         playing.checkIfObjectGotHit(attackBox);
+        playing.getGame().getAudioPlayer().playAttackSound();
     }
 
     public void render(Graphics graphics, int xLvlOffset) {
@@ -307,6 +312,7 @@ public class Player extends Entity {
     private void jump() {
         if(inAir) return;       //if we are in air we won't jump again
 
+        playing.getGame().getAudioPlayer().playEffect(AudioPlayer.JUMP);
         inAir = true;
         airSpeed = jumpSpeed;
     }
